@@ -9,6 +9,7 @@ import role from '../helper/role'
 import {createTrip, createWorkingTrip, getAllTrips, getSingleTrip} from '../services/admin/trip/index'
 import authentication from '../lib/auth/authentication';
 import {bookTicketManual, fetchTripTicket} from '../services/admin/ticket/index'
+import {fetchNameLogoPlan} from '../services/admin/company'
 
 const router = express.Router();
 
@@ -44,6 +45,10 @@ router.post('/workingTrip',  createWorkingTrip);
 router.post('/bookTicket',  bookTicketManual);
 router.post('/tripTicket',  fetchTripTicket);
 
+
+// Company
+
+router.get('/companyNLP',fetchNameLogoPlan);   // Fetch Company name logo and plan
 
 
 export default router

@@ -21,11 +21,12 @@ export default class TicketController {
 
   public static async findTripTickets(tripId:ObjectId): Promise<AllTickets | null> {
 
-    const tickets = await AllTicketsModel.findOne({tripId:tripId}).populate('tickets').lean<AllTickets>()
+    Logger.info(tripId)
+    const tickets = await AllTicketsModel.findOne({trip:tripId}).populate('tickets').lean<AllTickets>()
     
     if(!tickets)
     {
-      throw new InternalError("Error in fetching Tickets")
+      throw new InternalError("Tickets Not Found")
 
     }
     return tickets

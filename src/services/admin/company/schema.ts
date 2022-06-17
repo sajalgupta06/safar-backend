@@ -4,7 +4,7 @@ import { JoiAuthBearer } from '../../../helper/validator';
 
 export default {
   getCompany: Joi.object().keys({
-
+    id:Joi.string().required()
   }),  
   emailOtp: Joi.object().keys({
     email: Joi.string().required().email(),

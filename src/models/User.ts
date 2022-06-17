@@ -10,6 +10,7 @@ export default interface User extends Document {
   email?: string;
   password?: string;
   city?: string;
+  state?: string;
   country?: string;
   photo?: string;
   phone?: string;
@@ -56,19 +57,21 @@ const schema = new Schema(
     },
     gender: {
       type: Schema.Types.String,
-      enum: ["male", "female", "other"],
+      enum: ["MALE", "FEMALE", "OTHER"],
     },
     city: {
       type: Schema.Types.String,
-      lowercase:true,
+    },
+    state: {
+      type: Schema.Types.String,
     },
     country: {
       type: Schema.Types.String,
-      lowercase:true,
     },
     role: {
       type: Schema.Types.String,
-      required: true,
+      enum: ["CLIENT", "ADMIN"],
+      default:"CLIENT",
     },
     phoneVerified: {
       type: Schema.Types.Boolean,
@@ -91,6 +94,9 @@ const schema = new Schema(
     status: {
       type: Schema.Types.Boolean,
       default: true,
+    },
+    termsAndCondition: {
+        type: Schema.Types.Boolean,
     },
   },
   {

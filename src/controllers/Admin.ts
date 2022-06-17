@@ -82,5 +82,13 @@ export default class AdminController {
   }
 
 
+  public static fetchCompanyNameLogoPlan(id: Types.ObjectId|string): Promise<Admin | null> {
+   
+    return AdminModel.findById(id).select("companyRegistration")
+      .lean<Admin>()
+      .exec();
+  }
+
+
 
 }

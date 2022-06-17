@@ -23,7 +23,7 @@ export default interface Company extends Document {
 const schema = new Schema(
   {
    
-    name: {
+  name: {
       type: Schema.Types.String,
       required: true,
      
@@ -51,9 +51,7 @@ const schema = new Schema(
       
     }],
 
-    workingTrip: {
-      type: {},  
-    },
+  
 
     status: {
       type: Schema.Types.Boolean,

@@ -4,6 +4,7 @@ import JWT, { JwtPayload } from '../../helper/JWT';
 import { Types } from 'mongoose';
 import UserModel from '../../models/User';
 import AdminModel from '../../models/Admin';
+import OwnerModel from '../../models/Owner';
 import { tokenInfo } from '../../config';
 import bcrypt from 'bcrypt'
 
@@ -29,7 +30,7 @@ export const validateTokenData = (payload: JwtPayload): boolean => {
 };
 
 export const createTokens = async (
-  user: UserModel | AdminModel,
+  user: UserModel | AdminModel | OwnerModel,
   accessTokenKey: string,
   refreshTokenKey: string,
 ): Promise<Tokens> => {

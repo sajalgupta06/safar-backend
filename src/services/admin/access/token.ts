@@ -10,16 +10,16 @@ import JWT from '../../../helper/JWT';
 import KeystoreController from '../../../controllers/Keystore';
 import crypto from 'crypto';
 import { validateTokenData, createTokens, getAccessToken } from '../../../lib/auth/authUtils';
-import validator, { ValidationSource } from '../../../helper/validator';
-import schema from './schema';
+// import validator, { ValidationSource } from '../../../helper/validator';
+// import schema from './schema';
 import asyncHandler from '../../../helper/asyncHandler';
 
 const router = express.Router();
 
 router.post(
   '/refresh',
-  validator(schema.auth, ValidationSource.HEADER),
-  validator(schema.refreshToken),
+  // validator(schema.auth, ValidationSource.HEADER),
+  // validator(schema.refreshToken),
   asyncHandler(async (req: ProtectedRequest, res) => {
     req.accessToken = getAccessToken(req.headers.authorization); // Express headers are auto converted to lowercase
 
