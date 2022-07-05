@@ -38,6 +38,25 @@ export const fetchNameLogoPlan = [
   }),
 ];
 
+export const getCompanyInfo = [
+  // validator(schema.getCompany,ValidationSource.QUERY),
+  asyncHandler(async (req:ProtectedRequest, res) => {
+
+    
+    const company =  await AdminController.fetchCompanyInfo(
+    req.user._id
+
+    )
+    if(!company){
+      throw new InternalError("Unable to fetch info")
+    }
+
+    new SuccessResponse('Fetched',{
+      company
+    }).send(res);
+  }),
+];
+
 
 
 

@@ -72,14 +72,14 @@ const schema = new Schema(
       default: false,
     },
 
-    priceSlot: {
+    priceSlots: {
       pickupPoint: String,
       dropPoint: String,
       basePrice: Number,
-      pickupAc: Boolean,
       pickupTransMode: String,
       dropTransMode: String,
-      dropAc:Boolean,
+      finalPrice: Number
+
     },
 
     userDetails: {

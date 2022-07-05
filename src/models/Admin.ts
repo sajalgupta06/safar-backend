@@ -18,7 +18,6 @@ export default interface Admin extends Document {
     emailVerified?: boolean;
     phoneVerified?: boolean;
     gender?: string;
-    about:string;
     photo?: string;
     companyType?: string;
     onBoardingStatus?: string;
@@ -27,6 +26,7 @@ export default interface Admin extends Document {
       logo:{type:String},
       gstin: { type: String },
       yearOfFoundation: { type: String },
+      about:string;
       companyPan : {type:String},
       address: {
         country: { type: String },

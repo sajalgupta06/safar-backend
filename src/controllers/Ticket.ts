@@ -92,11 +92,12 @@ export default class TicketController {
 
 
 
-  public static async createTicketManual(data:{passengers:object[],tripId: string ,priceSlot:object}): Promise<object | null> {
+  public static async createTicketManual(data:{passengers:object[],tripId: string ,priceSlots:object,userDetails:{id:Types.ObjectId,name:string}}): Promise<object | null> {
 
     const session = await mongoose.startSession();
     session.startTransaction();
 
+  
       const ticket = new TicketModel(data)
 
       const savedTicket = await ticket.save({session})

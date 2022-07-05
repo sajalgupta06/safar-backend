@@ -23,12 +23,12 @@ export const bookTicketManual = [
   validator(schema.bookTicket,ValidationSource.BODY),
   asyncHandler(async (req:ProtectedRequest, res) => {
 
-  
+
     const ticket =  await TicketController.createTicketManual({
       passengers:req.body.passengers,
-      tripId:req.body.id,
-      priceSlot:req.body.priceSlot,
-
+      tripId:req.body.tripId,
+      priceSlots:req.body.priceSlots,
+      userDetails:{name:"ADMIN",id:req.user._id}
     })
     if(!ticket){
       throw new InternalError("Unable to Book Trip")

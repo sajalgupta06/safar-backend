@@ -3,7 +3,7 @@ import { JoiObjectId, JoiUrlEndpoint } from '../../../helper/validator';
 
 export default {
   createWorkingTrip: Joi.object().keys({
-    companyId: Joi.string().required().length(24),
+    data:Joi.object()
   }).unknown(true),
 
 };

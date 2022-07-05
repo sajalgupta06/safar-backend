@@ -27,7 +27,7 @@ export const bookTicketManual = [
     const ticket =  await TicketController.createTicketManual({
       passengers:req.body.passengers,
       tripId:req.body.id,
-      priceSlot:req.body.priceSlot,
+      priceSlots:req.body.priceSlots,
 
     })
     if(!ticket){

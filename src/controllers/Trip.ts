@@ -6,60 +6,45 @@ import Trip, { TripModel } from "../models/Trip";
 import Logger from "../helper/Logger";
 import User,{ UserModel } from "../models/User";
 import ResourceFilter from "../helper/ResourceFilter";
+import { AdminModel } from "../models/Admin";
 export default class TripController {
 
 
   public static async findAllTripAdmin(
     id: ObjectId,
     query: any
-  ): Promise<Company | null> {
-    const page = query.page * 1 || 1;
-    const limit = query.limit * 1 || 20;
-    const skip = (page - 1) * limit;
+  ): Promise<Trip | null> {
+    // const page = query.page * 1 || 1;
+    // const limit = query.limit * 1 || 20;
+    // const skip = (page - 1) * limit;
 
-    return await CompanyModel.findOne({ admin: id })
-      .select("trips")
-      .populate({
-        path: "trips",
-        model: "Trip",
-        options: {
-          sort: {},
-          skip: skip,
-          limit: limit,
-        },
-      })
+ let trips = new ResourceFilter(TripModel, query).filter().paginate()
+    return  await trips.resource
       
-      .lean<Company>()
-      .exec();
   }
 
   public static async createTripAdmin(
-    adminId: ObjectId|string,
+    user: any,
     data: any
   ): Promise<any | null> {
 
-    const company = await CompanyModel.findOne({ admin: adminId })
-      .select('+_id +workingTrip')
-      .lean<Company>()
-      .exec();
 
-        if(!company){
-          throw new NotFoundError("Unable to Find Associated Company")
-        }
+if(!user){
+          throw new NotFoundError("Unable to Find Associated User")
+ }
 
 
-    const workingTripData = company.workingTrip;
+    const workingTripData = user.workingTrip;
   
-
     const session = await mongoose.startSession();
     session.startTransaction();
 
 
     const tripData = {
-      company:company._id,
-      admin:adminId,
+     
+      admin:user._id,
       name:workingTripData.name,
-      collections:workingTripData.collections,
+      collections:workingTripData.type,
       from:workingTripData.from,
       to:workingTripData.to,
       noOfPlaces:workingTripData.noOfPlaces,
@@ -81,33 +66,18 @@ export default class TripController {
 
     const trip = new TripModel(tripData);
     const savedTrip = await trip.save({session})
-
     if (!savedTrip) {
       await session.abortTransaction();
       await session.endSession();
       throw new InternalError("Failed to save Trip");
     }
 
-    const savedCompany = await CompanyModel.findByIdAndUpdate(
-      { _id: company._id },
-      { $set: { workingTrip:null },$push:{trips:savedTrip._id} },
-      { new: true, upsert: true }
-    ).lean<Company>().session(session)
-
-
-    if (!savedCompany) {
-      await session.abortTransaction();
-      await session.endSession();
-
-      throw new InternalError("Failed to save Trip");
-    }
-   
     await session.commitTransaction();
     await session.endSession();
 
     const notificationData = {
       body: `A new trip ${savedTrip.name} has been created`,
-      adminId: adminId,
+      adminId: user._id,
       read: false,
     };
     return {savedTrip,notificationData}
@@ -173,8 +143,6 @@ export default class TripController {
   }
 
 
-
-
   public  static async findAllTripsOwner(
     query: any 
   ): Promise<User | null> {
@@ -200,6 +168,38 @@ export default class TripController {
       ).skip(skip).limit(limit).lean<Trip>()
    
   }
+
+
+  public  static async removeTrip(tripId:Object|any
+  ): Promise<  any|null> {
+   
+    await TripModel.findByIdAndDelete(tripId)
+
+    return    
+
+   
+  }
+
+  public  static async publishTrip(
+    tripId: string | Types.ObjectId,
+  ): Promise<Trip | null> {
+   
+    return await TripModel.updateOne({_id:tripId},{
+      $set:{published:true}
+    },{new:true}).lean<Trip>().exec()
+
+   
+  }
+
+  public  static async fetchTripPricePlan(
+    tripId: string | Types.ObjectId | any,
+  ): Promise<Trip | null> {
+   
+    return await TripModel.findById(tripId).select('priceSlots').lean<Trip>().exec()
+
+   
+  }
+
 
 
 }

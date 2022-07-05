@@ -10,7 +10,8 @@ export default {
 
     passengers: Joi.array().items({
       name:Joi.string().required().max(30),
-      phone:Joi.string().required().length(30),
+      phone:Joi.string().required().length(10),
+      age:Joi.number().required(),
       gender:Joi.string().required().max(6),
       adhr:Joi.string().required().max(12),
       email:Joi.string().required().email(),
@@ -18,14 +19,13 @@ export default {
     }),
 
 
-    priceSlot: Joi.object().keys({
+    priceSlots: Joi.object().keys({
       pickupPoint:Joi.string().required().max(30),
-      pickupTransMode:Joi.string().required().length(30),
-      pickupAc:Joi.boolean().required(),
+      pickupTransMode:Joi.string().required().max(30),
       dropPoint:Joi.string().required().max(30),
-      dropTransMode:Joi.string().required().length(30),
-      dropAc:Joi.boolean().required(),
-      basePrice:Joi.number().required()
+      dropTransMode:Joi.string().required().max(30),
+      basePrice:Joi.number().required(),
+      finalPrice:Joi.number().required()
     }),
  
     tripId:JoiObjectId().required()
