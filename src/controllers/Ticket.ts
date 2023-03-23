@@ -18,6 +18,7 @@ export default class TicketController {
     return  await ticket.resource
 
   }
+  
 
   public static async findTripTickets(tripId:ObjectId): Promise<AllTickets | null> {
 
@@ -92,7 +93,7 @@ export default class TicketController {
 
 
 
-  public static async createTicketManual(data:{passengers:object[],tripId: string ,priceSlots:object,userDetails:{id:Types.ObjectId,name:string}}): Promise<object | null> {
+  public static async createTicketManual(data:{passengers:object[]|any,tripId: string ,priceSlots:object,userDetails:{id:Types.ObjectId,name:string}}): Promise<object | null> {
 
     const session = await mongoose.startSession();
     session.startTransaction();

@@ -93,7 +93,7 @@ export default class AdminController {
   public static fetchCompanyInfo(id: Types.ObjectId|string): Promise<Admin | null> {
    
     return AdminModel.findById(id).select("companyRegistration")
-      .lean<Admin>().cache({key:id})
+    .lean<Admin>().cache({key:id})
       .exec();
       
   }

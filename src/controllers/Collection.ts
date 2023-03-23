@@ -34,7 +34,7 @@ export default class CollectionController {
   }
 
 
-  public static async getCollectionNamesOwner(): Promise<any | null> {
+  public static async getCollectionNames(): Promise<any | null> {
 
     let collection = await  CollectionModel.find({}).select('_id name');
    
@@ -45,15 +45,8 @@ export default class CollectionController {
   }
 
 
-  public static async getCollectionNamesAdmin(): Promise<any | null> {
 
-    let collection = await  CollectionModel.find({}).select('_id name');
-   
   
-    if(!collection) throw new InternalError("Unable to fetch Collection")
-
-    return collection
-  }
 
 
 }

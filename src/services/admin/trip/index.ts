@@ -189,3 +189,18 @@ export const getTripPricePlan = [
     ).send(res);
   }),
 ];
+
+
+// export const getPublishedTripsName = [
+  
+//   asyncHandler(async (req:ProtectedRequest, res) => {
+
+//       const pricePlan = await TripController.fetchTripPricePlan(tripId)
+    
+//     if (!pricePlan) throw new NotFoundError();
+
+//     new SuccessResponse('PricePlan Fetched', 
+//     pricePlan
+//     ).send(res);
+//   }),
+// ];

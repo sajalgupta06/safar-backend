@@ -3,8 +3,8 @@ import Logger from './helper/Logger';
 import bodyParser from 'body-parser';
 import cors from 'cors';
 import { corsUrl, environment } from './config';
-import './database'; // initialize database
 import './lib/cache/index' // Initialize Redis
+import './database'; // initialize database
 import { NotFoundError, ApiError, InternalError } from './helper/ApiError';
 import routes from './routes';
 import compression from 'compression'

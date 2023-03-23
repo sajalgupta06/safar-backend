@@ -8,8 +8,8 @@ import authentication from '../lib/auth/authentication';
 import { RoleCode } from '../models/Role';
 import role from '../helper/role'
 import {bookTicket, fetchUsersTicket} from '../services/client/ticket/index'
-import {addFavouriteTrip, removeFavouriteTrip, searchTrip, searchTripByCollection} from '../services/client/trip/index'
-
+import {addFavouriteTrip, removeFavouriteTrip, searchTrip, searchTripByCollection,getAllPublishedTrips, getSingleTrip} from '../services/client/trip/index'
+import {getAllCollectionsNames} from '../services/client/collection/index'
 
 const router = express.Router();
 
@@ -18,7 +18,7 @@ const router = express.Router();
 router.post('/getOtpPhone', getOtpPhone);
 router.post('/verifyOtpPhone', checkOtpPhone);
 
-router.use('/', role(RoleCode.CLIENT),authentication)  
+// router.use('/', role(RoleCode.CLIENT),authentication)  
 
 // Access
 router.get('/user', getUser);
@@ -37,8 +37,17 @@ router.post('/removeFavouriteTrip', removeFavouriteTrip);
 
 // Search Trip
 
-router.get('/trip', searchTrip);
+router.get('/search', searchTrip);
 router.get('/tripByCollection', searchTripByCollection);
+router.get('/trip', getSingleTrip);
+
+
+// fetch All Trips
+
+router.get('/trips', getAllPublishedTrips);
+router.get('/collNames', getAllCollectionsNames);
+
+//Collection
 
 
 

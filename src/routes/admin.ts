@@ -57,7 +57,7 @@ router.post('/tripTicket',  fetchTripTicket);
 // Company
 
 router.get('/companyNLP',fetchNameLogoPlan);   // Fetch Company name logo and plan
-router.get('/companyInfo',getCompanyInfo);   // Fetch Company name logo and plan
+router.get('/companyInfo',getCompanyInfo);   
 
 
 // Collections

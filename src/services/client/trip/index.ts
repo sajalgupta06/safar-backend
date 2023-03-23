@@ -7,7 +7,7 @@ import validator, { ValidationSource } from '../../../helper/validator';
 import schema from './schema';
 import asyncHandler from '../../../helper/asyncHandler';
 import _ from 'lodash';
-import { ProtectedRequest } from '../../../helper/app-request';
+import { ProtectedRequest, PublicRequest } from '../../../helper/app-request';
 import TripController from '../../../controllers/Trip';
 // import {adminActivityNotification} from '../../lib/setup/firebase'
 
@@ -99,4 +99,42 @@ export const searchTripByCollection = [
       }).send(res);
     }),
 
+  ];
+
+
+  export const getAllPublishedTrips = [
+   
+    asyncHandler(async (req:PublicRequest, res) => {
+  
+  
+        const trips = await TripController.findAllPublishedTrips({published:"true"})
+      
+      if (!trips) throw new InternalError();
+  
+      new SuccessResponse('Trips Fetched', {
+        trips
+      }).send(res);
+    }),
+  
+  ];
+  
+
+  export const getSingleTrip = [
+    validator(schema.searchById,ValidationSource.QUERY),
+    asyncHandler(async (req:PublicRequest, res) => {
+  
+        const tripId = req.query.id?.toString()
+        if(!tripId)
+        {
+          throw new NotFoundError("Please Provide Trip Id");
+        }
+  
+        const companyTrip = await TripController.findSingleTripClient(tripId)
+      
+      if (!companyTrip) throw new InternalError("Unable to fetch trip");
+  
+      new SuccessResponse('Trip Fetched', {
+        trip:companyTrip
+      }).send(res);
+    }),
   ];

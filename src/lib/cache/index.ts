@@ -1,22 +1,42 @@
-import mongoose from "mongoose";
+declare module 'mongoose' {
+  interface DocumentQuery<
+      T,
+      DocType extends import('mongoose').Document,
+      QueryHelpers = {}
+  > {
+      mongooseCollection: {
+          name: any;
+      };
+      cache(options:any): DocumentQuery<T[], Document> & QueryHelpers | any;
+      useCache: boolean;
+      hashKey: string;
+  }
+
+  interface Query<ResultType, DocType, THelpers = {}, RawDocType = DocType>
+      extends DocumentQuery<any, any> {}
+}
+
+import mongoose from 'mongoose'
 import util from "util";
 import * as redis from 'redis';
 import Logger  from "../../helper/Logger";
 
 const redisUrl = 'redis://127.0.0.1:6379';
 
+
+
 const client = redis.createClient({url:redisUrl});
 
-client.connect()
-client.on('connect', function() {
-    Logger.info("Redis Connected")
-});
+// client.connect()
+// client.on('connect', function() {
+//     Logger.info("Redis Connected")
+// });
 
 
-// client.hGetAll = util.promisify(client.hGetAll);
 
 
-mongoose.Query.prototype.cache = function cache(options:any) {
+
+mongoose.Query.prototype.cache = function (options:any) {
     // set flag to true
     this.useCache = true;
   
@@ -32,6 +52,8 @@ const exec = mongoose.Query.prototype.exec;
 
 mongoose.Query.prototype.exec = async function overrideExec(...params){
 
+  return exec.apply(this, params);
+
     if (!this.useCache) return exec.apply(this, params);
 
 
@@ -45,7 +67,8 @@ mongoose.Query.prototype.exec = async function overrideExec(...params){
 
 
     try {
-        const cacheValue = await client.HGET(this.hashKey,key);
+    
+        const cacheValue = await client.HGET(this.hashKey,key) || " ";
         if (cacheValue) {
           const cacheObject = JSON.parse(cacheValue);
 

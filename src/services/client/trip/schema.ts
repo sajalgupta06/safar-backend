@@ -10,5 +10,9 @@ export default {
     limit: Joi.string().max(2),
     page: Joi.string().max(2),
   }),
+
+  searchById: Joi.object().keys({
+    id: JoiObjectId().required(),
+  }),
  
 };

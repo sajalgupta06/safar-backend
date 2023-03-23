@@ -94,6 +94,18 @@ if(!user){
    
   }
 
+
+  public  static async findSingleTripClient(
+    tripId: string
+  ): Promise<Trip | null> {
+   
+    return await TripModel.findById({_id:tripId}).lean<Trip>().exec()
+
+   
+  }
+
+
+
   public  static async findFavouriteTripsClient(
     userId: string | Types.ObjectId
   ): Promise<User | null> {
@@ -153,6 +165,18 @@ if(!user){
    
   }
 
+  // For CLient
+
+  public  static async findAllPublishedTrips(
+    query: any 
+  ): Promise<User | null> {
+   
+    let trips = new ResourceFilter(TripModel, query).filter().paginate()
+    return  await trips.resource
+
+   
+  }
+
 
   public  static async searchTripByCollection(
     query:any
@@ -196,6 +220,16 @@ if(!user){
   ): Promise<Trip | null> {
    
     return await TripModel.findById(tripId).select('priceSlots').lean<Trip>().exec()
+
+   
+  }
+
+
+  public  static async fetchPublishedTripsNames(
+    adminId: string | Types.ObjectId | any,
+  ): Promise<Trip | null> {
+   
+    return await TripModel.find({adminId:adminId}).select('name').lean<Trip>().exec()
 
    
   }
