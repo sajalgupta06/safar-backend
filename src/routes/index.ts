@@ -8,7 +8,7 @@ import clientRoutes from './client'
 const router = express.Router();
 
 
-router.use('/', apiKey);
+// router.use('/', apiKey);
 
 
 

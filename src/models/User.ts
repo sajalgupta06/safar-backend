@@ -9,6 +9,7 @@ export default interface User extends Document {
   lastName: string;
   email?: string;
   password?: string;
+  age?: string;
   city?: string;
   state?: string;
   country?: string;
@@ -42,7 +43,7 @@ const schema = new Schema(
     },
     email: {
       type: Schema.Types.String,
-      unique: true,
+  
       trim: true,
     },
     phone: {
@@ -50,7 +51,10 @@ const schema = new Schema(
       unique: true,
       trim: true,
     },
-    
+    age: {
+      type: Schema.Types.String,
+      trim: true,
+    },
     photo: {
       type: Schema.Types.String,
       trim: true,
@@ -106,7 +110,7 @@ const schema = new Schema(
 );
 
 
-schema.index({ email: 1 });
+
 schema.index({ phone: 1 });
 schema.index({ status: 1 });
 

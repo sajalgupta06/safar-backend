@@ -8,7 +8,7 @@ import authentication from '../lib/auth/authentication';
 import { RoleCode } from '../models/Role';
 import role from '../helper/role'
 import {bookTicket, fetchUsersTicket} from '../services/client/ticket/index'
-import {addFavouriteTrip, removeFavouriteTrip, searchTrip, searchTripByCollection,getAllPublishedTrips, getSingleTrip} from '../services/client/trip/index'
+import {addFavouriteTrip, removeFavouriteTrip, searchTrip, searchTripByCollection,getAllPublishedTrips, getSingleTrip, getMultipleTrips} from '../services/client/trip/index'
 import {getAllCollectionsNames} from '../services/client/collection/index'
 
 const router = express.Router();
@@ -21,21 +21,21 @@ router.post('/verifyOtpPhone', checkOtpPhone);
 // router.use('/', role(RoleCode.CLIENT),authentication)  
 
 // Access
-router.get('/user', getUser);
-router.put('/user', updateUser);
+router.get('/user', role(RoleCode.CLIENT),authentication, getUser);
+router.put('/user',  role(RoleCode.CLIENT),authentication,updateUser);
 
 
-// Book Ticket
-router.post('/bookTrip', bookTicket);
-router.get('/ticket', fetchUsersTicket);
+// Book Ticket  
+router.post('/bookTrip', role(RoleCode.CLIENT),authentication, bookTicket);
+router.get('/ticket',role(RoleCode.CLIENT),authentication, fetchUsersTicket);
 
 
 // favourite Trip
 
-router.post('/addFavouriteTrip', addFavouriteTrip);
-router.post('/removeFavouriteTrip', removeFavouriteTrip);
+router.post('/addFavouriteTrip',  role(RoleCode.CLIENT),authentication,addFavouriteTrip);
+router.post('/removeFavouriteTrip',role(RoleCode.CLIENT),authentication, removeFavouriteTrip);
 
-// Search Trip
+// Search Triprun 
 
 router.get('/search', searchTrip);
 router.get('/tripByCollection', searchTripByCollection);
@@ -47,6 +47,9 @@ router.get('/trip', getSingleTrip);
 router.get('/trips', getAllPublishedTrips);
 router.get('/collNames', getAllCollectionsNames);
 
+//Fetch Multiple Trips
+
+router.post('/trips', getMultipleTrips);
 //Collection
 
 

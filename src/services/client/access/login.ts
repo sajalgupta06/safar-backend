@@ -25,7 +25,8 @@ export const getOtpPhone = [
 
     const {phone} = req.body
 
-
+    const user = await UserController.findByPhone(phone)
+    
     const otp =  await createOtp(phone)
 
     new SuccessResponse('Otp Sent',{
@@ -56,7 +57,8 @@ export const checkOtpPhone = [
           firstName:"guest",
           phone:phone,
           role:RoleCode.CLIENT,
-          phoneVerified:true
+          phoneVerified:true,
+          email:" "
         })
 
         if (!newUser) throw new InternalError();

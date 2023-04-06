@@ -43,9 +43,11 @@ export const updateUser = [
 export const getUser = [
   asyncHandler(async (req:ProtectedRequest, res) => {
 
+
+
     const userId = req.user._id
 
-
+    console.log(userId)
     const user =  await UserController.findUserForClient(userId)
     if(!user){
       throw new InternalError()

@@ -22,6 +22,8 @@ export default router.use(
     
     if ( !req.currentRoleCode) throw new AuthFailureError('Permission denied');
 
+      console.log(req.headers.authorization)
+
     req.accessToken = getAccessToken(req.headers.authorization); // Express headers are auto converted to lowercase
 
     try {

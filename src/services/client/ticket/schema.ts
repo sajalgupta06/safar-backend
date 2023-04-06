@@ -21,12 +21,13 @@ export default {
 
     priceSlot: Joi.object().keys({
       pickupPoint:Joi.string().required().max(30),
-      pickupTransMode:Joi.string().required().max(10),
-      pickupAc:Joi.boolean().required(),
+      pickupTransMode:Joi.string().required().max(20),
+      // pickupAc:Joi.boolean().required(),
       dropPoint:Joi.string().required().max(30),
-      dropTransMode:Joi.string().required().max(10),
-      dropAc:Joi.boolean().required(),
-      basePrice:Joi.number().required()
+      dropTransMode:Joi.string().required().max(20),
+      // dropAc:Joi.boolean().required(),
+      basePrice:Joi.number().required(),
+      
     }),
  
     id:JoiObjectId().required()

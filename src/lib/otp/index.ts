@@ -38,7 +38,7 @@ const savedOtp   = await OtpController.create(data,fullHash)
 }
 
 
-export const verifyOtp =async (userOtp:string,data:string)=> {
+export const  verifyOtp =async (userOtp:string,data:string)=> {
   
   if(!data)
   {

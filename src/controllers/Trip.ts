@@ -120,7 +120,7 @@ if(!user){
     tripId: string | Types.ObjectId,
   ): Promise<User | null> {
    
-    return await UserModel.updateOne({_id:userId},{
+    return await UserModel.findByIdAndUpdate({_id:userId},{
       $pull:{favouriteTrips:tripId}
     },{new:true}).lean<User>().exec()
 
@@ -132,8 +132,8 @@ if(!user){
     tripId: string | Types.ObjectId,
   ): Promise<User | null> {
    
-    return await UserModel.updateOne({_id:userId},{
-      $push:{favouriteTrips:tripId}
+    return await UserModel.findByIdAndUpdate({_id:userId},{
+      $addToSet:{favouriteTrips:tripId}
     },{new:true}).lean<User>().exec()
 
    

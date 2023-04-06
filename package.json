@@ -4,14 +4,16 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "npm run build && npm run serve",
-    "serve": "node -r dotenv/config build/server.js",
-    "build": "npm run clean && npm run build-ts",
+    "start": "npm run build && npm run serve ",
+    "pm2:stop": "pm2 stop  --interpreter ts-node-dev pm2.config.ts",
+    "serve": "node -r dotenv/config build/server.js ",
+    "build": "npm run clean && npm run build-ts ",
     "clean": "rimraf ./build",
     "build-ts": "tsc",
     "watch-ts": "tsc -w",
     "dev": "ts-node-dev -r dotenv/config src/server.ts"
   },
+  
   "keywords": [],
   "author": "",
   "license": "ISC",
@@ -30,6 +32,7 @@
     "loadash": "^1.0.0",
     "mongoose": "^6.1.6",
     "nodemon": "^2.0.15",
+    "pm2": "^5.3.0",
     "redis": "^4.0.2",
     "slugify": "^1.6.5",
     "ts-node": "^10.9.1",

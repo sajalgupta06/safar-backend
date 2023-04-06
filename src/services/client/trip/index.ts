@@ -39,7 +39,7 @@ export const addFavouriteTrip = [
   asyncHandler(async (req:ProtectedRequest, res) => {
 
       const id = req.user._id
-
+      
       const favouriteTrips = await TripController.addFavouriteTripsClient(id,req.body.id)
     
     if (!favouriteTrips) throw new InternalError();
@@ -135,6 +135,55 @@ export const searchTripByCollection = [
   
       new SuccessResponse('Trip Fetched', {
         trip:companyTrip
+      }).send(res);
+    }),
+  ];
+
+  export const getMultipleTrips = [
+    // validator(schema.searchById,ValidationSource.QUERY),
+    asyncHandler(async (req:PublicRequest, res) => {
+  
+      const data:any=[];
+
+      
+
+        const tripIds = req.body;
+      
+
+        for (let index = 0; index < tripIds.length; index++) {
+          const tripId = tripIds[index];
+          if(!tripId)
+          {
+            throw new NotFoundError("Please Provide Trip Id");
+          }
+
+          const companyTrip = await TripController.findSingleTripClient(tripId)
+         
+          if (!companyTrip) throw new InternalError("Unable to fetch trip");
+
+          data.push(companyTrip)
+          
+        }
+        // tripIds.forEach(async(tripId:any) => {
+          
+        //   if(!tripId)
+        //   {
+        //     throw new NotFoundError("Please Provide Trip Id");
+        //   }
+
+        //   const companyTrip = await TripController.findSingleTripClient(tripId)
+         
+        //   if (!companyTrip) throw new InternalError("Unable to fetch trip");
+
+        //   data.push(companyTrip)
+
+        // });
+       
+  
+      
+  
+      new SuccessResponse('Trips Fetched', {
+        trips:data
       }).send(res);
     }),
   ];
