@@ -21,4 +21,3 @@ build
 coverage
 
 # Environment varibles
-*.env

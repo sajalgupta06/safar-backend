@@ -28,8 +28,8 @@ export const bookTicket = [
   
     const ticket =  await TicketController.createTicket({
       passengers:req.body.passengers,
-      tripId:req.body.id,
-      priceSlot:req.body.priceSlot,
+      trip:req.body.trip,
+      payment:req.body.payment,
       userDetails:{
         id:req.user._id,
         name:`${req.user.firstName} ${req.user.lastName?req.user.lastName:""}`
@@ -40,13 +40,14 @@ export const bookTicket = [
     }
 
     Logger.info(ticket)
-    const notificationData = {
-      body: `A new user has booked ${ticket.trip.name} `,
-      adminId: ticket.trip.admin.toString(),
-      read: false,
-    };
+    
+    // const notificationData = {
+    //   body: `A new user has booked ${ticket.trip.name} `,
+    //   adminId: ticket.trip.admin.toString(),
+    //   read: false,
+    // };
 
-    await adminNotification(ticket.trip.admin.toString(),notificationData)
+    // await adminNotification(ticket.trip.admin.toString(),notificationData)
 
     new SuccessResponse('Ticket Booked',{
       ticket:ticket.savedTicket

@@ -17,6 +17,10 @@ export default interface WorkingTrip extends Document {
   photos: [string];
   days: number;
   nights: number;
+  dates:[{
+    startDate:string,
+    endDate:string,
+  }]
   allDestinations: [string];
   priceSlots: [
     {

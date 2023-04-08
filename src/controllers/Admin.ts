@@ -103,14 +103,16 @@ export default class AdminController {
   public static async updateWorkingTrip(tripId: Types.ObjectId|string,data:object): Promise<any | null> {
 
  
-
     let admin = await AdminModel.findByIdAndUpdate(tripId,{$set:{workingTrip:data}},{new:true}).lean<Admin>()
 
     if(!admin)
     {
+
       throw new InternalError("Error in fetching Company")
 
+
     }
+    
     return admin.workingTrip
 
   }

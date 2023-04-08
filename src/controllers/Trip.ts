@@ -45,8 +45,7 @@ if(!user){
       admin:user._id,
       name:workingTripData.name,
       collections:workingTripData.type,
-      from:workingTripData.from,
-      to:workingTripData.to,
+      dates:workingTripData.dates,
       noOfPlaces:workingTripData.noOfPlaces,
       location:workingTripData.location,
       ageLimit:workingTripData.ageLimit,
@@ -62,6 +61,7 @@ if(!user){
       inclusions:workingTripData.inclusions,
       exclusions:workingTripData.exclusions,
       published:data.published,
+
     }
 
     const trip = new TripModel(tripData);

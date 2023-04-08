@@ -14,19 +14,35 @@ export default interface Ticket extends Document {
       adhr: string;
     }
   ];
-  priceSlot: {
-    pickupPoint: string;
-    dropPoint: string;
-    basePrice: number;
-    pickupAc: boolean;
-    pickupTransMode: string;
-    dropTransMode: string;
-    dropAc: boolean;
+
+  payment: {
+    status: boolean;
+    amount: string;
+    mode: string;
   };
+
+  trip: {
+    name: string;
+    slug: string;
+    priceSlot: {
+      pickupPoint: string;
+      dropPoint: string;
+      basePrice: number;
+      pickupTransMode: string;
+      dropTransMode: string;
+    };
+    id: string;
+    date: {
+      startDate: string;
+      endDate: string;
+    };
+  };
+
   userDetails: {
     name: string;
     city: string;
   };
+
   confirmed?: boolean;
   completed?: boolean;
   createdAt?: Date;
@@ -72,19 +88,31 @@ const schema = new Schema(
       default: false,
     },
 
-    priceSlots: {
-      pickupPoint: String,
-      dropPoint: String,
-      basePrice: Number,
-      pickupTransMode: String,
-      dropTransMode: String,
-      finalPrice: Number
-
+    trip: {
+      name: String,
+      slug: String,
+      priceSlot: {
+        pickupPoint: String,
+        dropPoint: String,
+        basePrice: Number,
+        pickupTransMode: String,
+        dropTransMode: String,
+      },
+      id: String,
+      date: {
+        startDate: String,
+        endDate: String,
+      },
     },
 
+    payment: {
+      status: Boolean,
+      amount: String,
+      mode: String,
+    },
     userDetails: {
       name: String,
-      id:Schema.Types.ObjectId,
+      id: Schema.Types.ObjectId,
     },
   },
   {
@@ -92,7 +120,6 @@ const schema = new Schema(
     timestamps: true,
   }
 );
-
 
 export const TicketModel = model<Ticket>(
   DOCUMENT_NAME,

@@ -10,8 +10,10 @@ export const COLLECTION_NAME = "trips";
 export default interface Trip extends Document {
   name: string;
   slug: string;
-  from: string;
-  to: string;
+  dates:[{
+    startDate:string,
+    endDate:string
+  }]
   company: Company;
   admin:User;
   noOfPlaces: Number;
@@ -64,7 +66,14 @@ const schema = new Schema(
       type: Schema.Types.ObjectId,
       ref: "User",
     },
-   
+   dates:[
+    {
+
+    startDate:{type:Schema.Types.String},
+    endDate:{type:Schema.Types.String},
+    }
+   ],
+  
     collections: [{
       name: Schema.Types.String,
       id: Schema.Types.String,
@@ -79,12 +88,7 @@ const schema = new Schema(
       type: Schema.Types.String,
       trim: true,
     },
-    from: {
-      type: Schema.Types.String,
-    },
-    to: {
-      type: Schema.Types.String,
-    },
+   
     noOfPlaces: {
       type: Schema.Types.String,
     },

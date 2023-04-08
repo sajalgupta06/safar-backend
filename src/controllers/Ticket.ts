@@ -35,18 +35,14 @@ export default class TicketController {
   }
 
 
-  public static async createTicket(data:{passengers:object[],tripId: string ,priceSlot:object,userDetails:{id:Types.ObjectId,name:string}}): Promise<{savedTicket:object,trip:any}> {
+  public static async createTicket(data:any): Promise<{savedTicket:object}> {
 
 
     const session = await mongoose.startSession();
     session.startTransaction();
 
-    const trip = await TripModel.findById(data.tripId).select("name admin").lean<Trip>()
-
-    if(!trip){
-      throw new BadRequestError("Trip Not Found")
-    }
-
+    console.log(data)
+   
       const ticket = new TicketModel(data)
 
       const savedTicket = await ticket.save({session})
@@ -58,7 +54,7 @@ export default class TicketController {
     }
 
     const updatedAllTickets = await AllTicketsModel.findOneAndUpdate(
-      { trip: data.tripId },
+      { trip: data.trip.id },
       { $push: { tickets: savedTicket._id } ,  $inc: { ticketCount: data.passengers.length } },
       { new: true,upsert:true }
     ).lean<AllTickets>().session(session);
@@ -86,7 +82,7 @@ export default class TicketController {
 
     
 
-    return {savedTicket,trip}
+    return {savedTicket}
 
   }
 
