@@ -72,8 +72,10 @@ export const searchTrip = [
   validator(schema.query,ValidationSource.QUERY),
   asyncHandler(async (req:ProtectedRequest, res) => {
 
+    const filter = req.body.filter
+    const sorter = req.body.sorter
 
-      const trips = await TripController.searchTrip(req.query)
+    const trips = await TripController.searchTrip(req.query,filter,sorter)
     
     if (!trips) throw new InternalError();
 

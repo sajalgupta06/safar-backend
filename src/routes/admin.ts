@@ -6,7 +6,7 @@ import {login} from '../services/admin/access/login'
 import {checkOtpEmail, checkOtpPhone, getOtpEmail, getOtpPhone, signup} from '../services/admin/access/signup'
 import { RoleCode } from '../models/Role';
 import role from '../helper/role'
-import {createTrip, createWorkingTrip, deleteTrips, fetchWorkingTrip, getAllTrips, getSingleTrip, getTripPricePlan, publishTrip} from '../services/admin/trip/index'
+import {createTrip, createWorkingTrip, deleteTrips, fetchWorkingTrip, getAllTrips, getSingleTrip, getTripPricePlan, publishTrip, updateTrip} from '../services/admin/trip/index'
 import authentication from '../lib/auth/authentication';
 import {bookTicketManual, fetchTripTicket} from '../services/admin/ticket/index'
 import {fetchNameLogoPlan, getCompanyInfo} from '../services/admin/company'
@@ -33,6 +33,7 @@ router.use('/',role(RoleCode.ADMIN),authentication )
 // Trips
 
 router.post('/trip', createTrip);
+router.put('/trip', updateTrip);
 router.get('/trips',  getAllTrips);
 router.get('/trip',  getSingleTrip);
 router.post('/deleteTrips',  deleteTrips);

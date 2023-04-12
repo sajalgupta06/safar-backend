@@ -17,16 +17,17 @@ import Logger from '../../helper/Logger';
 const router = express.Router();
 
 export default router.use(
+
   validator(schema.auth, ValidationSource.HEADER),
   asyncHandler(async (req: ProtectedRequest, res, next) => {
     
     if ( !req.currentRoleCode) throw new AuthFailureError('Permission denied');
 
-      console.log(req.headers.authorization)
 
     req.accessToken = getAccessToken(req.headers.authorization); // Express headers are auto converted to lowercase
 
     try {
+      
       const payload = await JWT.validate(req.accessToken);
       validateTokenData(payload);
 

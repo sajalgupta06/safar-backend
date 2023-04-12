@@ -1,7 +1,6 @@
 import { ObjectId, Types } from "mongoose";
 import mongoose from "mongoose";
 import { InternalError, NotFoundError } from "../helper/ApiError";
-import Company, { CompanyModel } from "../models/Company";
 import Trip, { TripModel } from "../models/Trip";
 import Logger from "../helper/Logger";
 import User,{ UserModel } from "../models/User";
@@ -39,6 +38,18 @@ if(!user){
     const session = await mongoose.startSession();
     session.startTransaction();
 
+    function getLowestPrice(priceSlots:any) {
+      let lowestPrice = Number.MAX_SAFE_INTEGER;
+      for (const slot of priceSlots) {
+        const basePrice = parseInt(slot.basePrice);
+        if (basePrice < lowestPrice) {
+          lowestPrice = basePrice;
+        }
+      }
+      return lowestPrice;
+    }
+
+    const finalPrice = getLowestPrice(workingTripData.priceSlots)
 
     const tripData = {
      
@@ -51,8 +62,8 @@ if(!user){
       ageLimit:workingTripData.ageLimit,
       lastDate:workingTripData.lastDate,
       photos:workingTripData.photos,
-      days:workingTripData.days,
-      nights:workingTripData.nights,
+      discount:workingTripData.discount,
+      finalPrice:finalPrice,
       priceSlots:workingTripData.priceSlots,
       itinerary:workingTripData.itinerary,
       about:workingTripData.about,
@@ -60,6 +71,8 @@ if(!user){
       conditions:workingTripData.conditions,
       inclusions:workingTripData.inclusions,
       exclusions:workingTripData.exclusions,
+      completed:workingTripData.published,
+      cancelled:workingTripData.published,
       published:data.published,
 
     }
@@ -84,6 +97,17 @@ if(!user){
 
 
   }
+
+
+
+  public static async updateTripAdmin(id:Types.ObjectId,data:any): Promise<any> {
+
+    return  await  TripModel.findByIdAndUpdate( id , { $set: { ...data } },{new:true})
+       .lean()
+       .exec(); 
+   }
+ 
+
 
   public  static async findSingleTripAdmin(
     tripId: string
@@ -140,17 +164,84 @@ if(!user){
   }
 
   public  static async searchTrip(
-    query:any
-  ): Promise<Trip | null> {
+    query:any,
+    filter:any,
+    sorter:any
+  ): Promise<any | null> {
 
     const search = query.search || " "
     const page = query.page * 1 || 1;
-    const limit =query.limit * 1 || 10;
+    const limit = query.limit * 1 || 10;
     const skip = (page - 1) * limit;
+    const minDays = filter?.minDays || 0;
+    const maxDays = filter?.maxDays || 20;
+    const minPrice = filter?.minPrice || 0;
+    const maxPrice = filter?.maxPrice || 100000;
+    const collectionName = filter?.collectionName ;
+
     
-    return await TripModel.find(
-      {$text: {$search: search}},
-      ).skip(skip).limit(limit).lean<Trip>()
+    // return await TripModel.find(
+    //   {$text: {$search: search}},
+    //   ).skip(skip).limit(limit).lean<Trip>()
+
+    const matchStages = [];
+
+    matchStages.push({
+      $match: { 
+        $and: [
+        {$text: { $search: search }},
+        {days: { $gte: minDays,$lte: maxDays }},  
+        {"priceSlots.basePrice":  { $gte: minPrice, $lte: maxPrice } },
+        { ...(collectionName && { "collections.name": collectionName }) }        ]
+      }
+    })
+
+    if(sorter?.finalPrice)
+    {
+
+      matchStages.push({
+        $sort: {
+          finalPrice: 1 as any
+        }
+      });
+      
+    }
+
+    if(sorter?.newest)
+    {
+
+      matchStages.push({
+        $sort: {
+          updatedAt:  -1  as any
+        }
+      });
+      
+    }
+
+    if(sorter?.popular)
+    {
+
+      matchStages.push({
+        $sort: {
+          popular:  -1 as any
+        }
+      });
+      
+    }
+
+
+    matchStages.push({
+      $skip: skip
+    });
+    
+    matchStages.push({
+      $limit: limit
+    });
+
+   
+    
+
+    return await TripModel.aggregate(matchStages)
    
   }
 
@@ -164,6 +255,9 @@ if(!user){
 
    
   }
+
+
+
 
   // For CLient
 

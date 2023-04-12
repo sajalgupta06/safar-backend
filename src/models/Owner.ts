@@ -1,6 +1,5 @@
 import { model, Schema, Document } from "mongoose";
 import bcrypt from "bcrypt";
-import Company from "./Company";
 export const DOCUMENT_NAME = "Owner";
 export const COLLECTION_NAME = "owners";
 
@@ -17,7 +16,6 @@ export default interface Owner extends Document {
   emailVerified?: boolean;
   phoneVerified?: boolean;
   gender?: string;
-  company:Company;
   status?: boolean;
   createdAt?: Date;
   updatedAt?: Date;

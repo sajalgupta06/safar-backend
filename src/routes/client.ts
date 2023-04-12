@@ -37,7 +37,7 @@ router.post('/removeFavouriteTrip',role(RoleCode.CLIENT),authentication, removeF
 
 // Search Triprun 
 
-router.get('/search', searchTrip);
+router.post('/search', searchTrip);
 router.get('/tripByCollection', searchTripByCollection);
 router.get('/trip', getSingleTrip);
 

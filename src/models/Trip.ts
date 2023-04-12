@@ -1,6 +1,5 @@
 import { model, Schema, Document } from "mongoose";
 import slugify from "slugify";
-import Company from "./Company";
 import User from "./User";
 import Ticket from './Ticket'
 
@@ -14,12 +13,11 @@ export default interface Trip extends Document {
     startDate:string,
     endDate:string
   }]
-  company: Company;
   admin:User;
-  noOfPlaces: Number;
+  noOfPlaces: number;
   location: string;
   about:string;
-  ageLimit: string;
+  ageLimit: number;
   lastDate: string;
   photos: [string];
   days: number;
@@ -33,7 +31,7 @@ export default interface Trip extends Document {
       dropPoint: string;
       dropTransMode: string;
       dropAc: boolean;
-      basePrice: string;
+      basePrice: number;
     }
   ];
 
@@ -42,7 +40,7 @@ export default interface Trip extends Document {
   conditions: [string];
   inclusions: [string];
   exclusions: [string];
-  finalPrice: boolean;
+  finalPrice: number;
   discount: number;
   completed: boolean;
   published: boolean;
@@ -58,10 +56,7 @@ export default interface Trip extends Document {
 
 const schema = new Schema(
   {
-    company: {
-      type: Schema.Types.ObjectId,
-      ref: "Company",
-    },
+   
     admin: {
       type: Schema.Types.ObjectId,
       ref: "User",
@@ -90,13 +85,13 @@ const schema = new Schema(
     },
    
     noOfPlaces: {
-      type: Schema.Types.String,
+      type: Schema.Types.Number,
     },
     location: {
       type: Schema.Types.String,
     },
     ageLimit: {
-      type: Schema.Types.String,
+      type: Schema.Types.Number,
     },
     lastDate: {
       type: Schema.Types.String,
@@ -141,7 +136,7 @@ const schema = new Schema(
         dropPoint: Schema.Types.String,
         dropTransMode: Schema.Types.String,
         dropAc: Schema.Types.Boolean,
-        basePrice: Schema.Types.String,
+        basePrice: Schema.Types.Number,
       },
     ],
 

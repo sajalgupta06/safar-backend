@@ -65,6 +65,29 @@ export const createTrip = [
 ];
 
 
+export const updateTrip = [
+  
+  asyncHandler(async (req:ProtectedRequest, res) => {
+
+    const  data   = req.body.data
+    const  id   = req.body.id
+
+
+    const result = await TripController.updateTripAdmin(id,data)
+
+    if (!result) throw new InternalError('Unable to update Trip');
+   
+  //  await adminActivityNotification(result.notificationDAta.adminId,result.notificationData)
+   
+    new SuccessResponse('Trip Update Successfully', {
+      trip: result
+    }).send(res);
+  }),
+];
+
+
+
+
 
 export const getAllTrips = [
   
@@ -103,7 +126,7 @@ export const getSingleTrip = [
   }),
 ];
 
-export const updateTrip = [
+export const updateAdminWorkingTrip = [
   
   asyncHandler(async (req:ProtectedRequest, res) => {
 

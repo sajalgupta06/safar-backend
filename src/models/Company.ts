@@ -2,7 +2,6 @@ import { Schema, model, Document } from 'mongoose';
 import slugify from 'slugify';
 import User from './User'
 import Trip from './Trip'
-import WorkingTrip, { WorkingTripModel } from './WorkingTrip'
 
 export const DOCUMENT_NAME = 'Company';
 export const COLLECTION_NAME = 'companies';
@@ -14,7 +13,6 @@ export default interface Company extends Document {
   photo:string;
   about:string;
   // pricingPlan:string;
-  workingTrip:WorkingTrip;
   status:boolean;
   createdAt?: Date;
   updatedAt?: Date;
