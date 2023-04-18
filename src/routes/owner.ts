@@ -14,7 +14,7 @@ import { allAdmins, singleAdmin} from '../services/owner/users/admin'
 import { getAllUsers, getUser, updateUser} from '../services/owner/users/client'
 import {createCompany} from '../services/owner/company/index'
 import {bookTicketManual, fetchTripTicket} from '../services/owner/ticket/index'
-
+import {fetchTopTrending, handleAddCollections, handleAddLocations, handleDeleteCollection, handleDeleteLocation} from '../services/owner/Manual/TopTrending'
 const router = express.Router();
 
 
@@ -75,6 +75,18 @@ router.post('/company',  createCompany);
 
 router.post('/bookTicket',  bookTicketManual);
 router.post('/tripTicket',  fetchTripTicket);
+
+
+
+//  Manual Top Trending
+
+router.post('/addLocations', handleAddLocations);
+router.post('/addCollections', handleAddCollections);
+router.post('/deleteCollection', handleDeleteCollection);
+router.post('/deleteLocation', handleDeleteLocation);
+router.get('/topTrending', fetchTopTrending);
+
+
 
 
 

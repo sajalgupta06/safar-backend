@@ -127,7 +127,14 @@ if(!user){
 
    
   }
+  public  static async findSingleTripClientBySlug(
+    slug: string
+  ): Promise<Trip | null> {
+   
+    return await TripModel.findOne({slug:slug}).lean<Trip>().cache({key:slug}).exec()
 
+   
+  }
 
 
   public  static async findFavouriteTripsClient(
@@ -163,26 +170,28 @@ if(!user){
    
   }
 
-  public  static async searchTrip(
+  public  static async FETCH_SEARCH_TRIPS_NAME_SLUG_FINALPRICE(
     query:any,
-    filter:any,
-    sorter:any
   ): Promise<any | null> {
 
     const search = query.search || " "
     const page = query.page * 1 || 1;
     const limit = query.limit * 1 || 10;
     const skip = (page - 1) * limit;
-    const minDays = filter?.minDays || 0;
-    const maxDays = filter?.maxDays || 20;
-    const minPrice = filter?.minPrice || 0;
-    const maxPrice = filter?.maxPrice || 100000;
-    const collectionName = filter?.collectionName ;
+    const minDays = parseInt(query?.minDays || 0);
+    const maxDays = parseInt(query?.maxDays || 20);
+    const minPrice = parseInt(query?.minPrice || 0);
+    const maxPrice = parseInt(query?.maxPrice || 100000);
+    const sortDirection = parseInt(query?.sortDirection );
+    const sort = query?.sort;
+
+    // const collectionName = filter?.collectionName ;
 
     
     // return await TripModel.find(
     //   {$text: {$search: search}},
     //   ).skip(skip).limit(limit).lean<Trip>()
+
 
     const matchStages = [];
 
@@ -191,39 +200,41 @@ if(!user){
         $and: [
         {$text: { $search: search }},
         {days: { $gte: minDays,$lte: maxDays }},  
-        {"priceSlots.basePrice":  { $gte: minPrice, $lte: maxPrice } },
-        { ...(collectionName && { "collections.name": collectionName }) }        ]
+        {finalPrice:  { $gte: minPrice, $lte: maxPrice } },
+        // { ...(collectionName && { "collections.name": collectionName }) }  
+      
+      ]
       }
     })
 
-    if(sorter?.finalPrice)
+    if(sort=="price")
     {
 
       matchStages.push({
         $sort: {
-          finalPrice: 1 as any
+          finalPrice: sortDirection || 1 as any
         }
       });
       
     }
 
-    if(sorter?.newest)
+    if(sort=="newestFirst")
     {
 
       matchStages.push({
         $sort: {
-          updatedAt:  -1  as any
+          updatedAt:  sortDirection || 1 as any
         }
       });
       
     }
 
-    if(sorter?.popular)
+    if(sort=="popular")
     {
 
       matchStages.push({
         $sort: {
-          popular:  -1 as any
+          popular:  sortDirection || -1 as any
         }
       });
       
@@ -237,11 +248,9 @@ if(!user){
     matchStages.push({
       $limit: limit
     });
+  
 
-   
-    
-
-    return await TripModel.aggregate(matchStages)
+    return await TripModel.aggregate(matchStages).cache({key:query})
    
   }
 
@@ -266,9 +275,15 @@ if(!user){
   ): Promise<User | null> {
    
     let trips = new ResourceFilter(TripModel, query).filter().paginate()
-    return  await trips.resource
+    return  await trips.resource.cache({key:query}).exec()
 
+  }
+
+
+  public  static async FETCH_POPULAR_TRIPS_NAME_SLUG_FINALPRICE(): Promise<User | null> {
    
+    // let trips = new ResourceFilter(TripModel, query).filter().paginate()
+    return  await TripModel.find({published:true}).select("+name +slug +finalPrice").cache({key:"FETCH_POPULAR_TRIPS_NAME_SLUG_FINALPRICE"}).exec()
   }
 
 

@@ -72,10 +72,9 @@ export const searchTrip = [
   validator(schema.query,ValidationSource.QUERY),
   asyncHandler(async (req:ProtectedRequest, res) => {
 
-    const filter = req.body.filter
-    const sorter = req.body.sorter
+   
 
-    const trips = await TripController.searchTrip(req.query,filter,sorter)
+    const trips = await TripController.FETCH_SEARCH_TRIPS_NAME_SLUG_FINALPRICE(req.query)
     
     if (!trips) throw new InternalError();
 
@@ -109,7 +108,7 @@ export const searchTripByCollection = [
     asyncHandler(async (req:PublicRequest, res) => {
   
   
-        const trips = await TripController.findAllPublishedTrips({published:"true"})
+        const trips = await TripController.FETCH_POPULAR_TRIPS_NAME_SLUG_FINALPRICE()
       
       if (!trips) throw new InternalError();
   
@@ -138,6 +137,28 @@ export const searchTripByCollection = [
       new SuccessResponse('Trip Fetched', {
         trip:companyTrip
       }).send(res);
+    }),
+  ];
+
+
+  export const getSingleTripBySlug = [
+    // validator(schema.searchById,ValidationSource.QUERY),
+    asyncHandler(async (req:PublicRequest, res) => {
+  
+    
+        const slug = req.params.slug
+ 
+
+        if(!slug)
+        {
+          throw new NotFoundError("Please Provide Trip details");
+        }
+  
+        const trip = await TripController.findSingleTripClientBySlug(slug)
+      
+      if (!trip) throw new InternalError("Unable to fetch trip");
+  
+      new SuccessResponse('Trip Fetched',{trip:trip} ).send(res);
     }),
   ];
 

@@ -8,7 +8,7 @@ import './database'; // initialize database
 import { NotFoundError, ApiError, InternalError } from './helper/ApiError';
 import routes from './routes';
 import compression from 'compression'
-
+import fileUpload from 'express-fileupload'
 process.on('uncaughtException', (e) => {
   Logger.error(e);
 });
@@ -18,6 +18,7 @@ const app = express();
 app.use(bodyParser.json({ limit: '10mb' }));
 app.use(bodyParser.urlencoded({ limit: '10mb', extended: true, parameterLimit: 50000 }));
 app.use(cors({ origin: corsUrl, optionsSuccessStatus: 200 }));
+app.use(fileUpload())
 app.use(compression())
 
 // Routes

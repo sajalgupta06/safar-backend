@@ -164,6 +164,7 @@ schema.pre("save", function (next) {
 
 schema.index({ admin: 1 });
 schema.index({ company: 1 });
+schema.index({ slug: 1 });
 schema.index({ "collections.id": -1 });
 schema.index({
   location: "text",

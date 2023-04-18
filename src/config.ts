@@ -45,5 +45,10 @@ export const otpInfo = {
 
 }
 
+export const awsKeys = {
+accessIDKey : process.env.ACCESS_ID_KEY,
+secreteAccessKey: process.env.SECRET_ACCESS_KEY
+}
+
 
 

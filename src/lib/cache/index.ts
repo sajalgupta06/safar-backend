@@ -1,113 +1,147 @@
-declare module 'mongoose' {
+declare module "mongoose" {
   interface DocumentQuery<
-      T,
-      DocType extends import('mongoose').Document,
-      QueryHelpers = {}
+    T,
+    DocType extends import("mongoose").Document,
+    QueryHelpers = {}
   > {
-      mongooseCollection: {
-          name: any;
-      };
-      cache(options:any): DocumentQuery<T[], Document> & QueryHelpers | any;
-      useCache: boolean;
-      hashKey: string;
+    mongooseCollection: {
+      name: any;
+    };
+    cache(options: any): (DocumentQuery<T[], Document> & QueryHelpers) | any;
+    useCache: boolean;
+    hashKey: string;
   }
-
   interface Query<ResultType, DocType, THelpers = {}, RawDocType = DocType>
-      extends DocumentQuery<any, any> {}
+  extends DocumentQuery<any, any> {}
+
+
+
+  interface AggregateCache<T, QueryHelpers = {}> {
+    cache(options: any): (DocumentQuery<T[], Document> & QueryHelpers) | any;
+    useCache: boolean;
+    hashKey: string;
+  }
+  interface Aggregate<R> extends AggregateCache<any, any> {}
+
+
+
+ 
 }
 
-import mongoose from 'mongoose'
+import mongoose from "mongoose";
 import util from "util";
-import * as redis from 'redis';
-import Logger  from "../../helper/Logger";
+import * as redis from "redis";
+import Logger from "../../helper/Logger";
 
-const redisUrl = 'redis://127.0.0.1:6379';
+const redisUrl = "redis://127.0.0.1:6379";
 
+const client = redis.createClient({ url: redisUrl });
 
+client.connect();
+client.on("connect", function () {
+  Logger.info("Redis Connected");
+});
 
-const client = redis.createClient({url:redisUrl});
+mongoose.Query.prototype.cache = function (options: any) {
+  // set flag to true
+  this.useCache = true;
 
-// client.connect()
-// client.on('connect', function() {
-//     Logger.info("Redis Connected")
-// });
+  this.hashKey = JSON.stringify(options.key || "default");
 
+  return this;
+};
 
+mongoose.Aggregate.prototype.cache = function (options: any) {
+  // set flag to true
+  this.useCache = true;
 
+  this.hashKey = JSON.stringify(options.key || "default");
 
-
-mongoose.Query.prototype.cache = function (options:any) {
-    // set flag to true
-    this.useCache = true;
-  
-    this.hashKey = JSON.stringify(options.key || 'default');
-
-    return this;    
-  };
-
+  return this;
+};
 
 const exec = mongoose.Query.prototype.exec;
+const aggregateExec = mongoose.Aggregate.prototype.exec;
 
 // overrideExec(...params)
 
-mongoose.Query.prototype.exec = async function overrideExec(...params){
-
-  return exec.apply(this, params);
-
-    if (!this.useCache) return exec.apply(this, params);
+mongoose.Query.prototype.exec = async function overrideExec(...params) {
+  // return exec.apply(this, params);
 
 
+  if (!this.useCache) return exec.apply(this, params);
 
-   const key =  JSON.stringify(Object.assign({},this.getQuery(),{
-        collection:this.mongooseCollection.name
-    }))
+  const key = JSON.stringify(
+    Object.assign({}, this.getQuery(), {
+      collection: this.mongooseCollection.name,
+    })
+  );
 
-  
+  try {
+    const cacheValue = (await client.HGET(this.hashKey, key)) || "";
+    if (cacheValue?.length > 0) {
+      const cacheObject = JSON.parse(cacheValue);
 
+      // return Array.isArray(cacheObject)
+      //   ? cacheObject.map(doc => new this.model(doc))
+      //   : new this.model(cacheObject);
 
-
-    try {
-    
-        const cacheValue = await client.HGET(this.hashKey,key) || " ";
-        if (cacheValue) {
-          const cacheObject = JSON.parse(cacheValue);
-
-          // return Array.isArray(cacheObject)
-          //   ? cacheObject.map(doc => new this.model(doc))
-          //   : new this.model(cacheObject);
-
-          return cacheObject
-        }
-
-        
-    
-        const result = await exec.apply(this, params);
-        if(result)
-        {
-           
-            client.HSET(this.hashKey,key, JSON.stringify(result));
-          
-        }
-        return result;
-      } catch (error) {
-        return error
+      return cacheObject;
     }
-}
 
-const setSearchkey = (keys:string)=>{
+    const result = await exec.apply(this, params);
 
-client.append("search",keys)
+    if (result) {
+      client.HSET(this.hashKey, key, JSON.stringify(result));
+    }
+    return result;
+  } catch (error) {
+    return error;
+  }
+};
 
+mongoose.Aggregate.prototype.exec = async function overrideExec(...params) {
+  // return exec.apply(this, params);
 
+  if (!this.useCache) return aggregateExec.apply(this, params);
 
-}
+  const key = JSON.stringify(
+    Object.assign({}, this.pipeline, {
+      collection: this.model,
+    })
+  );
+
+  try {
+    const cacheValue = (await client.HGET(this.hashKey, key)) || "";
+    if (cacheValue?.length > 0) {
+      const cacheObject = JSON.parse(cacheValue);
+
+      // return Array.isArray(cacheObject)
+      //   ? cacheObject.map(doc => new this.model(doc))
+      //   : new this.model(cacheObject);
+
+      return cacheObject;
+    }
+
+    const result = await aggregateExec.apply(this, params);
+
+    if (result) {
+      client.HSET(this.hashKey, key, JSON.stringify(result));
+    }
+    return result;
+  } catch (error) {
+    return error;
+  }
+};
+
+const setSearchkey = (keys: string) => {
+  client.append("search", keys);
+};
 
 module.exports = {
+  clearCache(hashKey: string) {
+    client.del(JSON.stringify(hashKey));
+  },
 
-    clearCache(hashKey:string) {
-      client.del(JSON.stringify(hashKey));
-    },
-
-    setSearchkey
-
-  };
+  setSearchkey,
+};
