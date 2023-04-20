@@ -15,10 +15,16 @@ services:
     # but we have set the container to restart unless it is stopped.
     restart: unless-stopped
     env_file: .env
+    volumes:
+      -  /home/node/app/node_modules
+      - .:/home/node/app
     ports:
       # This maps port from .env on the host to same port number on the container.
-      - '$PORT:$PORT'
+      # - '$PORT:$PORT'
+      - '$PORT:80'
 
+  redis-server:
+    image: 'redis'
  
 
 

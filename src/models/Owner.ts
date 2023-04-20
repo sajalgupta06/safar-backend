@@ -89,7 +89,8 @@ const schema = new Schema(
 schema.pre("save", async function (next) {
   try {
     const salt = await bcrypt.genSalt(10);
-    const hashed_password = await bcrypt.hash(this.password, salt);
+    let oldPassword = this.password  || " "     
+    const hashed_password = await bcrypt.hash(oldPassword, salt);
     this.password = hashed_password;
     console.log(this.password);
     next();

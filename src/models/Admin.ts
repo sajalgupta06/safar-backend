@@ -43,7 +43,8 @@ export default interface Admin extends Document {
       accountNumber:Number,
       accountHolderName:String,
       IfscCode:String,
-    }
+    },
+    slug:string,
     trips?:ObjectId;
     workingTrip:any;
     status?: boolean;
@@ -128,7 +129,7 @@ const schema = new Schema(
       type: Boolean,
       default: true,
     },
-
+    slug:String,
     companyType: {
       type: String,
       enum: ["ORGANISATION", "INDIVIDUAL"],
@@ -181,7 +182,8 @@ const schema = new Schema(
 schema.pre("save", async function (next) {
   try {
     const salt = await bcrypt.genSalt(10);
-    const hashed_password = await bcrypt.hash(this.password, salt);
+    let oldpassword = this.password ||""
+    const hashed_password = await bcrypt.hash(oldpassword, salt);
     this.password = hashed_password;
     console.log(this.password);
     next();
@@ -191,7 +193,7 @@ schema.pre("save", async function (next) {
 });
 
 schema.pre("save", function (next) {
-  this.slug = slugify(this.companyRegistration.legalCompanyName, { lower: true });
+  this.slug = slugify(this?.companyRegistration?.legalCompanyName||"default", { lower: true });
   next();
 });
 

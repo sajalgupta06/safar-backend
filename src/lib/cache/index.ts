@@ -15,16 +15,6 @@ declare module "mongoose" {
   extends DocumentQuery<any, any> {}
 
 
-
-  interface AggregateCache<T, QueryHelpers = {}> {
-    cache(options: any): (DocumentQuery<T[], Document> & QueryHelpers) | any;
-    useCache: boolean;
-    hashKey: string;
-  }
-  interface Aggregate<R> extends AggregateCache<any, any> {}
-
-
-
  
 }
 
@@ -33,7 +23,12 @@ import util from "util";
 import * as redis from "redis";
 import Logger from "../../helper/Logger";
 
-const redisUrl = "redis://127.0.0.1:6379";
+let redisUrl = "redis://127.0.0.1:6379";
+
+if(process.env.NODE_ENV=="docker")
+{
+  redisUrl = "redis://redis-server";
+}
 
 const client = redis.createClient({ url: redisUrl });
 
@@ -51,21 +46,12 @@ mongoose.Query.prototype.cache = function (options: any) {
   return this;
 };
 
-mongoose.Aggregate.prototype.cache = function (options: any) {
-  // set flag to true
-  this.useCache = true;
 
-  this.hashKey = JSON.stringify(options.key || "default");
-
-  return this;
-};
 
 const exec = mongoose.Query.prototype.exec;
-const aggregateExec = mongoose.Aggregate.prototype.exec;
 
-// overrideExec(...params)
 
-mongoose.Query.prototype.exec = async function overrideExec(...params) {
+mongoose.Query.prototype.exec = async function overrideExec(...params:any) {
   // return exec.apply(this, params);
 
 
@@ -100,39 +86,6 @@ mongoose.Query.prototype.exec = async function overrideExec(...params) {
   }
 };
 
-mongoose.Aggregate.prototype.exec = async function overrideExec(...params) {
-  // return exec.apply(this, params);
-
-  if (!this.useCache) return aggregateExec.apply(this, params);
-
-  const key = JSON.stringify(
-    Object.assign({}, this.pipeline, {
-      collection: this.model,
-    })
-  );
-
-  try {
-    const cacheValue = (await client.HGET(this.hashKey, key)) || "";
-    if (cacheValue?.length > 0) {
-      const cacheObject = JSON.parse(cacheValue);
-
-      // return Array.isArray(cacheObject)
-      //   ? cacheObject.map(doc => new this.model(doc))
-      //   : new this.model(cacheObject);
-
-      return cacheObject;
-    }
-
-    const result = await aggregateExec.apply(this, params);
-
-    if (result) {
-      client.HSET(this.hashKey, key, JSON.stringify(result));
-    }
-    return result;
-  } catch (error) {
-    return error;
-  }
-};
 
 const setSearchkey = (keys: string) => {
   client.append("search", keys);
