@@ -1,0 +1,24 @@
+language: node_js
+node_js:
+  - 13
+services:
+  - docker
+before_install:
+  # - cp .env.example .env
+  # - cp keys/public.pem.example keys/public.pem
+  # - cp keys/private.pem.example keys/private.pem
+  # - cp tests/.env.test.example tests/.env.test
+  - docker-compose up -d
+
+  deploy:
+    provider: elasticbeanstalk
+    region: 'es'
+    app: "safar"
+    env: "Safar-env"
+    bucket_name: "ad"
+    bucket_path: 'safar'
+    on:
+      branch: master
+    access_key_id: $AWS_ACCESS_KEY
+    secret_access_key: 
+      secure: $AWS_SECRET_KEY

@@ -20,8 +20,8 @@ services:
       - .:/home/node/app
     ports:
       # This maps port from .env on the host to same port number on the container.
-      # - '$PORT:$PORT'
-      - '$PORT:80'
+      - '$PORT:$PORT'
+      # - '$PORT:'
 
   redis-server:
     image: 'redis'

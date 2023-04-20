@@ -10,11 +10,13 @@ RUN npm install
 
 COPY . .
 
-# CMD [ "npm", "run","dev" ]
+EXPOSE 8080
 
-RUN npm run build
+CMD [ "npm", "run","start" ]
 
-FROM nginx
+# RUN npm run build
 
-COPY --from=builder /home/node/app/build /usr/share/nginx/html
+# FROM nginx
+
+# COPY --from=builder /home/node/app/build /usr/share/nginx/html
 
