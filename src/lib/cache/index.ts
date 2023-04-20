@@ -25,7 +25,7 @@ import Logger from "../../helper/Logger";
 
 let redisUrl = "redis://127.0.0.1:6379";
 
-if(process.env.NODE_ENV=="docker")
+if(process.env.NODE_ENV=="production")
 {
   redisUrl = "redis://redis-server";
 }
