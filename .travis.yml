@@ -12,10 +12,10 @@ before_install:
 
   deploy:
     provider: elasticbeanstalk
-    region: 'es'
+    region: 'eu-north-1'
     app: "safar"
     env: "Safar-env"
-    bucket_name: "ad"
+    bucket_name: "elasticbeanstalk-eu-north-1-195612002133"
     bucket_path: 'safar'
     on:
       branch: master
