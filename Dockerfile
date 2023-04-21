@@ -1,22 +1,23 @@
-FROM node:13 as builder
+# Here we are getting our node as Base image
+FROM node:13
 
+# create user in the docker image
 USER node
 
+# Creating a new directory for app files and setting path in the container
+RUN mkdir -p /home/node/app && chown -R node:node /home/node/app
+
+# setting working directory in the container
 WORKDIR /home/node/app
 
-COPY package.json .
+# grant permission of node project directory to node user
+COPY --chown=node:node . .
 
+# installing the dependencies into the container
 RUN npm install
 
-COPY . .
-
+# container exposed network port number
 EXPOSE 8080
 
-CMD [ "npm", "run","start" ]
-
-# RUN npm run build
-
-# FROM nginx
-
-# COPY --from=builder /home/node/app/build /usr/share/nginx/html
-
+# command to run within the container
+CMD [ "npm", "run","dev" ]

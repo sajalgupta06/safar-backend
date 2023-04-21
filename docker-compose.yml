@@ -18,13 +18,22 @@ services:
     volumes:
       -  /home/node/app/node_modules
       - .:/home/node/app
-    ports:
-      # This maps port from .env on the host to same port number on the container.
-      - '$PORT:$PORT'
-      # - '$PORT:'
+    # ports:
+    #   - '$PORT:$PORT'
 
   redis-server:
     image: 'redis'
+
+  nginx:
+    image: 'nginx'
+    build: 
+      dockerfile: Dockerfile
+      context: ./nginx
+    ports:
+      - '8080:80'
+    depends_on:
+        - app
+
  
 
 
