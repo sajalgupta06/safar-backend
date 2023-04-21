@@ -1,24 +1,29 @@
-language: node_js
-node_js:
-  - 13
+sudo: required
+language: generic
+
 services:
   - docker
+
+
 before_install:
-  # - cp .env.example .env
-  # - cp keys/public.pem.example keys/public.pem
-  # - cp keys/private.pem.example keys/private.pem
-  # - cp tests/.env.test.example tests/.env.test
-  - docker-compose up -d
+  - docker build -t sajalgupta06/app .
+  - docker build -t sajalgupta06/nginx ./nginx
+ 
+  # Log in to the docker CLI
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  # Take those images and push them to docker hub
+  - docker push sajalgupta06/app
+  - docker push sajalgupta06/nginx
+
 
 deploy:
   provider: elasticbeanstalk
-  region: 'eu-north-1'
-  app: "safar"
-  env: "Safar-env"
-  bucket_name: "elasticbeanstalk-eu-north-1-195612002133"
-  bucket_path: 'safar'
+  region: eu-north-1
+  app: safar
+  env: Safar-env
+  bucket_name: elasticbeanstalk-eu-north-1-195612002133
+  bucket_path: safar
   on:
     branch: master
   access_key_id: $AWS_ACCESS_KEY
-  secret_access_key: 
-   secure: $AWS_SECRET_KEY
+  secret_access_key: $AWS_SECRET_KEY
