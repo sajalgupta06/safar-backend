@@ -5,7 +5,8 @@ import Trip, { TripModel } from "../models/Trip";
 import Logger from "../helper/Logger";
 import User, { UserModel } from "../models/User";
 import ResourceFilter from "../helper/ResourceFilter";
-import { AdminModel } from "../models/Admin";
+import Admin, { AdminModel } from "../models/Admin";
+import AllTickets, { AllTicketsModel } from "../models/AllTickets";
 export default class TripController {
   public static async findAllTripAdmin(
     id: ObjectId,
@@ -19,6 +20,15 @@ export default class TripController {
     return await trips.resource;
   }
 
+  public static async findSingleTripAdminBySlug(
+    slug: string
+  ): Promise<Trip | null> {
+    return await TripModel.findOne({ slug: slug })
+      .lean<Trip>()
+      .cache({ key: slug })
+      .exec();
+  }
+
   public static async createTripAdmin(
     user: any,
     data: any
@@ -27,7 +37,9 @@ export default class TripController {
       throw new NotFoundError("Unable to Find Associated User");
     }
 
-    const workingTripData = user.workingTrip;
+    const admin = await AdminModel.findById(user._id)
+
+    const workingTripData = admin?.workingTrip;
 
     const session = await mongoose.startSession();
     session.startTransaction();
@@ -35,7 +47,7 @@ export default class TripController {
     function getLowestPrice(priceSlots: any) {
       let lowestPrice = Number.MAX_SAFE_INTEGER;
       for (const slot of priceSlots) {
-        const basePrice = parseInt(slot.basePrice);
+        const basePrice = parseInt(slot.amount);
         if (basePrice < lowestPrice) {
           lowestPrice = basePrice;
         }
@@ -43,15 +55,20 @@ export default class TripController {
       return lowestPrice;
     }
 
+
     const finalPrice = getLowestPrice(workingTripData.priceSlots);
+
 
     const tripData = {
       admin: user._id,
       name: workingTripData.name,
       collections: workingTripData.type,
       dates: workingTripData.dates,
+      days: workingTripData.days,
+      nights: workingTripData.nights,
       noOfPlaces: workingTripData.noOfPlaces,
-      location: workingTripData.location,
+      locations: workingTripData.locations,
+      region: workingTripData.region,
       ageLimit: workingTripData.ageLimit,
       lastDate: workingTripData.lastDate,
       photos: workingTripData.photos,
@@ -61,21 +78,75 @@ export default class TripController {
       itinerary: workingTripData.itinerary,
       about: workingTripData.about,
       highlights: workingTripData.highlights,
-      conditions: workingTripData.conditions,
       inclusions: workingTripData.inclusions,
       exclusions: workingTripData.exclusions,
-      completed: workingTripData.published,
-      cancelled: workingTripData.published,
+      terms: workingTripData.terms,
+      recommendations: workingTripData.recommendations,
+      allowCancellation: data.allowCancellation,
       published: data.published,
     };
 
     const trip = new TripModel(tripData);
     const savedTrip = await trip.save({ session });
+
+
     if (!savedTrip) {
       await session.abortTransaction();
       await session.endSession();
       throw new InternalError("Failed to save Trip");
     }
+
+  
+
+    if(data.published)
+    {
+      
+    const AllTickets = new AllTicketsModel({
+      trip: savedTrip.id,
+      admin:user._id,
+      tickets: [],
+      ticketCount: 0,
+    });
+
+    const saveAllTickets = await AllTickets.save({ session });
+
+    if (!saveAllTickets) {
+      await session.abortTransaction();
+      await session.endSession();
+      throw new InternalError("Error in creating ticket model");
+    }
+
+    const updatedAdmin = await TripModel.findByIdAndUpdate(
+      admin?._id,
+      { $push: { trips: savedTrip},$set:{Alltickets:saveAllTickets._id} },
+      { new: true }
+    ).lean<Admin>()
+      .exec();
+  
+      if (!updatedAdmin) {
+        await session.abortTransaction();
+        await session.endSession();
+        throw new InternalError("Error in updating admin");
+      }
+
+    }
+
+    else{
+      const updatedAdmin = await TripModel.findByIdAndUpdate(
+        admin?._id,
+        { $push: { trips: savedTrip} },
+        { new: true }
+      ).lean<Admin>()
+        .exec();
+    
+        if (!updatedAdmin) {
+          await session.abortTransaction();
+          await session.endSession();
+          throw new InternalError("Error in updating admin");
+        }
+    }
+
+
 
     await session.commitTransaction();
     await session.endSession();
@@ -85,6 +156,7 @@ export default class TripController {
       adminId: user._id,
       read: false,
     };
+
     return { savedTrip, notificationData };
   }
 
@@ -105,6 +177,18 @@ export default class TripController {
     tripId: string
   ): Promise<Trip | null> {
     return await TripModel.findById({ _id: tripId }).lean<Trip>().exec();
+  }
+  public static async findActiveTripsNameSlugPriceSlotsDates(
+    adminId: string
+  ): Promise<Trip | null> {
+    return await TripModel.find({
+      admin: adminId,
+      published: true,
+      completed: false,
+    })
+      .select("name slug priceSlots dates")
+      .lean<Trip>()
+      .exec();
   }
 
   public static async findSingleTripClient(
@@ -175,7 +259,6 @@ export default class TripController {
     const sortDirection = parseInt(query?.sortDirection);
     const sort = query?.sort;
 
-
     let findQuery = {
       $text: { $search: search },
       days: { $gte: minDays, $lte: maxDays },
@@ -193,26 +276,20 @@ export default class TripController {
       sortQuery = { popular: sortDirection || -1 };
     }
 
-
     return await TripModel.find({
-
-        $and: [
-          { $text: { $search: search } },
-          { days: { $gte: minDays, $lte: maxDays } },
-          { finalPrice: { $gte: minPrice, $lte: maxPrice } },
-          // { ...(collectionName && { "collections.name": collectionName }) }
-        ],
-    
+      $and: [
+        { $text: { $search: search } },
+        { days: { $gte: minDays, $lte: maxDays } },
+        { finalPrice: { $gte: minPrice, $lte: maxPrice } },
+        // { ...(collectionName && { "collections.name": collectionName }) }
+      ],
     })
-      .select(' name slug finalPrice ')
+      .select(" name slug finalPrice ")
       .skip(skip)
       .limit(limit)
       .sort(sortQuery)
       .lean<Trip>()
       .cache({ key: query });
-
- 
-
   }
 
   public static async findAllTripsOwner(query: any): Promise<User | null> {
@@ -256,15 +333,41 @@ export default class TripController {
   public static async publishTrip(
     tripId: string | Types.ObjectId
   ): Promise<Trip | null> {
-    return await TripModel.updateOne(
+
+    const session = await mongoose.startSession();
+    session.startTransaction();
+
+    const updatedTrip =  await TripModel.updateOne(
       { _id: tripId },
       {
         $set: { published: true },
-      },
-      { new: true }
-    )
+      }
+      ).session(session)
       .lean<Trip>()
       .exec();
+
+      if (!updatedTrip) {
+        await session.abortTransaction();
+        await session.endSession();
+        throw new InternalError("Error in updating trip");
+      }
+
+      const AllTickets = new AllTicketsModel({
+        trip: tripId,
+        tickets: [],
+        ticketCount: 0,
+      });
+  
+      const saveAllTickets = await AllTickets.save({ session });
+  
+      if (!saveAllTickets) {
+        await session.abortTransaction();
+        await session.endSession();
+        throw new InternalError("Error in creating ticket model");
+      }
+
+      return updatedTrip
+
   }
 
   public static async fetchTripPricePlan(

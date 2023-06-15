@@ -10,25 +10,42 @@ export default {
 
     passengers: Joi.array().items({
       name:Joi.string().required().max(30),
-      phone:Joi.string().required().length(10),
       age:Joi.number().required(),
       gender:Joi.string().required().max(6),
-      adhr:Joi.string().required().max(12),
-      email:Joi.string().required().email(),
+      mobileNumber:Joi.number(),
+      aadharNumber:Joi.number(),
+      email:Joi.string().email(),
 
     }),
 
 
-    priceSlots: Joi.object().keys({
-      pickupPoint:Joi.string().required().max(30),
-      pickupTransMode:Joi.string().required().max(30),
-      dropPoint:Joi.string().required().max(30),
-      dropTransMode:Joi.string().required().max(30),
-      basePrice:Joi.number().required(),
-      finalPrice:Joi.number().required()
+    payment:Joi.object().keys({
+      mode:Joi.string(),
+      amount:Joi.number(),
+      status:Joi.boolean()
+
     }),
- 
-    tripId:JoiObjectId().required()
+    
+
+    tripDetails:Joi.object().keys({ 
+      id:JoiObjectId().required(),
+      name:Joi.string(),
+      slug:Joi.string(),
+    
+      priceSlot: Joi.object().keys({
+        pickupPoint:Joi.string().required().max(30),
+        pickupMode:Joi.string().required().max(30),
+        dropPoint:Joi.string().required().max(30),
+        dropMode:Joi.string().required().max(30),
+        amount:Joi.number().required(),
+        key:Joi.number(),
+        date:Joi.object().keys({
+          startDate:Joi.string(),
+          endDate:Joi.string(),
+          key:Joi.number(),
+        })
+      })
+    })
 
 
   }),

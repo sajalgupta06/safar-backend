@@ -24,18 +24,21 @@ export const bookTicketManual = [
   asyncHandler(async (req:ProtectedRequest, res) => {
 
 
-    const ticket =  await TicketController.createTicketManual({
+    const savedTicket  =  await TicketController.createTicketManual({
       passengers:req.body.passengers,
-      tripId:req.body.tripId,
-      priceSlots:req.body.priceSlots,
-      userDetails:{name:"ADMIN",id:req.user._id}
+      payment:req.body.payment,
+      tripDetails:req.body.tripDetails,
+      userDetails:{name:"ADMIN",id:req.user._id},
+      admin:req.user._id
     })
-    if(!ticket){
+    if(!savedTicket){
       throw new InternalError("Unable to Book Trip")
     }
 
+  
+
     new SuccessResponse('Ticket Booked',{
-      ticket
+      ticket:savedTicket
     }).send(res);
   }),
 ];
@@ -46,7 +49,7 @@ export const bookTicketManual = [
 export const fetchTripTicket = [
   asyncHandler(async (req:ProtectedRequest, res) => {
 
-    const tripId = req.body.id
+    const tripId = req.body.tripId
 
 
     const tickets =  await TicketController.findTripTickets(tripId)
@@ -61,5 +64,61 @@ export const fetchTripTicket = [
 ];
 
 
+export const fetchRecentTicketsAdmin = [
+  asyncHandler(async (req:ProtectedRequest, res) => {
+
+    const adminId = req.user._id
+    const query = req.query
 
 
+    const tickets =  await TicketController.findRecentTicketsAdmin(query,adminId)
+    if(!tickets){
+
+      throw new InternalError()
+    }
+
+    new SuccessResponse('Ticket Fetched',{
+      tickets:tickets 
+    }).send(res);
+  }),
+];
+
+
+export const fetchAllBookingsTrips = [
+  asyncHandler(async (req:ProtectedRequest, res) => {
+
+    const adminId = req.user._id
+    const query = req.query
+
+
+    const trips =  await TicketController.findAllBookingsTrip(query,adminId)
+    if(!trips){
+
+      throw new InternalError()
+    }
+
+    new SuccessResponse('Trips Fetched',{
+      trips:trips 
+    }).send(res);
+  }),
+];
+
+
+export const fetchActiveTripsBookingDetails = [
+  asyncHandler(async (req:ProtectedRequest, res) => {
+
+    const adminId = req.user._id
+    const query = req.query
+
+
+    const trips =  await TicketController.findActiveTripsBookingDetail(query,adminId)
+    if(!trips){
+
+      throw new InternalError()
+    }
+
+    new SuccessResponse('Trips Fetched',{
+      trips:trips 
+    }).send(res);
+  }),
+];

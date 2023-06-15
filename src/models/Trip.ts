@@ -1,7 +1,6 @@
 import { model, Schema, Document } from "mongoose";
 import slugify from "slugify";
 import User from "./User";
-import Ticket from './Ticket'
 
 export const DOCUMENT_NAME = "Trip";
 export const COLLECTION_NAME = "trips";
@@ -15,36 +14,41 @@ export default interface Trip extends Document {
   }]
   admin:User;
   noOfPlaces: number;
-  location: string;
+  locations: [string];
+  region: string;
   about:string;
   ageLimit: number;
   lastDate: string;
   photos: [string];
   days: number;
   nights: number;
-  allDestinations: [string];
   priceSlots: [
     {
       pickupPoint: string;
-      pickupTransMode: string;
-      pickupAc: boolean;
+      pickupMode: string;
       dropPoint: string;
-      dropTransMode: string;
-      dropAc: boolean;
-      basePrice: number;
+      dropMode: string;
+      amount: number;
+      key:number;
+     date:{
+        startDate:string,
+        endDate:string,
+        key:number
+      }
     }
   ];
 
   itinerary: any;
   highlights: [string];
-  conditions: [string];
   inclusions: [string];
   exclusions: [string];
+  terms: [string];
+  recommendations: [string];
   finalPrice: number;
   discount: number;
   completed: boolean;
   published: boolean;
-  cancelled: boolean;
+  allowCancellation: boolean;
   collections: [{
     name:string,
     id:string
@@ -66,6 +70,7 @@ const schema = new Schema(
 
     startDate:{type:Schema.Types.String},
     endDate:{type:Schema.Types.String},
+    key:{ type: Schema.Types.Number}
     }
    ],
   
@@ -87,9 +92,10 @@ const schema = new Schema(
     noOfPlaces: {
       type: Schema.Types.Number,
     },
-    location: {
-      type: Schema.Types.String,
-    },
+    locations: [Schema.Types.String],
+
+    region: {type:Schema.Types.String} ,
+
     ageLimit: {
       type: Schema.Types.Number,
     },
@@ -115,6 +121,7 @@ const schema = new Schema(
     },
     discount: Schema.Types.Number,
     finalPrice: Schema.Types.Number,
+
     completed: {
       type: Schema.Types.Boolean,
       default: false, 
@@ -123,7 +130,7 @@ const schema = new Schema(
       type: Schema.Types.Boolean,
       default: false,
     },
-    cancelled: {
+    allowCancellation: {
       type: Schema.Types.Boolean,
       default: false,
     },
@@ -131,24 +138,33 @@ const schema = new Schema(
     priceSlots: [
       {
         pickupPoint: Schema.Types.String,
-        pickupTransMode: Schema.Types.String,
-        pickupAc: Schema.Types.Boolean,
+        pickupMode: Schema.Types.String,
         dropPoint: Schema.Types.String,
-        dropTransMode: Schema.Types.String,
-        dropAc: Schema.Types.Boolean,
-        basePrice: Schema.Types.Number,
+        dropMode: Schema.Types.String,
+        amount: Schema.Types.Number,
+        key:{type: Schema.Types.Number},
+        date: {
+          key:{type: Schema.Types.Number},
+          startDate:{type:Schema.Types.String},
+          endDate:{type:Schema.Types.String},
+          }
       },
     ],
 
     itinerary: {},
     highlights: [Schema.Types.String],
-    conditions: [Schema.Types.String],
+    terms: [Schema.Types.String],
     inclusions: [Schema.Types.String],
     exclusions: [Schema.Types.String],
+    recommendations: [Schema.Types.String],
+
     status: {
       type: Schema.Types.Boolean,
       default: true,
     },
+
+   
+
    
   },
   {
@@ -167,9 +183,9 @@ schema.index({ company: 1 });
 schema.index({ slug: 1 });
 schema.index({ "collections.id": -1 });
 schema.index({
-  location: "text",
+  region: "text",
   name: "text",
-  allDestinations: "text",
+  locations: "text",
   "collections.name": "text",
 });
 

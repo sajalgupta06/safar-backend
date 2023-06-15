@@ -12,15 +12,25 @@ import AdminController from '../../../controllers/Admin';
 // import {adminActivityNotification} from '../../lib/setup/firebase'
 
 
+export const verifyAdminAccess = [
+  
+  asyncHandler(async (req:ProtectedRequest, res) => {
+    
+    const admin = req.user
 
+    new SuccessResponse('Admin Verified', 
+    admin
+    ).send(res);
+  }),
+];
 
 export const getAdminInfo = [
   
   asyncHandler(async (req:ProtectedRequest, res) => {
     
-      const admin = await AdminController.fetchAdminInfo(req.user._id)
-    
-    if (!admin) throw new InternalError();
+    const admin = req.user
+
+  
 
     new SuccessResponse('Admin Info Fetched', 
     admin

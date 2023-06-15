@@ -18,9 +18,9 @@ import CollectionController from '../../../controllers/Collection';
 
 export const asd = [
   
-  asyncHandler(async (req:ProtectedRequest, res) => {
+  asyncHandler(async (req:any, res) => {
     
-      const collections = await CollectionController.getCollectionNamesAdmin()
+      const collections =[];
     
     if (!collections) throw new InternalError();
 

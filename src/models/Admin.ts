@@ -1,7 +1,8 @@
 import { model, Schema, Document, ObjectId } from "mongoose";
 import bcrypt from "bcrypt";
-import Company from "./Company";
 import slugify from "slugify";
+import Trip from "./Trip";
+import AllTickets from "./AllTickets";
 export const DOCUMENT_NAME = "Admin";
 export const COLLECTION_NAME = "admins";
 
@@ -45,7 +46,8 @@ export default interface Admin extends Document {
       IfscCode:String,
     },
     slug:string,
-    trips?:ObjectId;
+    trips?:Trip[];
+    alltickets?:AllTickets[];
     workingTrip:any;
     status?: boolean;
     createdAt?: Date;
@@ -124,6 +126,10 @@ const schema = new Schema(
       type: Schema.Types.ObjectId,
       ref: "Trip",
     }],
+    allTickets: [{
+      type: Schema.Types.ObjectId,
+      ref: "AllTickets",
+    }],
 
     status: {
       type: Boolean,
@@ -170,6 +176,7 @@ const schema = new Schema(
     workingTrip: {
       type: {},  
     },
+
 
   },
   

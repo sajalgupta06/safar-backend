@@ -25,30 +25,26 @@ const db = admin.firestore();
 const messaging = admin.messaging();
 
 
+export const notificationFormat = (type:any, data:any, )=>{
 
- export const adminNotification = async (adminId:string, data:any) => {
+  return {
+    type:type,
+    data:data,
+    read: false,
+    createdAt: Date.now(),
+  }
+
+
+}
+
+
+
+
+  export const adminNotification = async (adminId:string, type:any, data:any) => {
     const uuid = v4();
   
     const notification = {
-      data,
-      id: uuid,
-      read: false,
-      createdAt: Date.now(),
-    };
-  
-    const usersDocRef = db
-      .collection("admin")
-      .doc(adminId)
-      .collection("Notifications")
-      .doc(uuid);
-  
-    return await usersDocRef.set(notification);
-  };
-
-  export const adminActivityNotification = async (adminId:string, data:any) => {
-    const uuid = v4();
-  
-    const notification = {
+      type:type,
       data,
       id: uuid,
       read: false,
@@ -57,10 +53,13 @@ const messaging = admin.messaging();
   
     const usersDocRef =  db
       .collection("admin")
-      .doc(adminId)
-      .collection("Activity")
-      .doc(uuid);
-  
+      .doc(adminId.toString())
+      .collection("Notifications")
+      .doc(uuid.toString())
+      
+
+     
+    
     return await usersDocRef.set(notification);
   };
 

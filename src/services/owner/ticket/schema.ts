@@ -28,8 +28,10 @@ export default {
       basePrice:Joi.number().required()
     }),
  
-    tripId:JoiObjectId().required()
-
+    tripDetails:Joi.object().keys({ 
+      id:JoiObjectId().required(),
+      name:Joi.string()
+    })
 
   }),
 

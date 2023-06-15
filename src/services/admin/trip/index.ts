@@ -10,7 +10,6 @@ import _ from 'lodash';
 import { ProtectedRequest } from '../../../helper/app-request';
 import TripController from '../../../controllers/Trip';
 import AdminController from '../../../controllers/Admin';
-// import {adminActivityNotification} from '../../lib/setup/firebase'
 
 export const createWorkingTrip = [
   validator(schema.createWorkingTrip),
@@ -56,7 +55,6 @@ export const createTrip = [
 
     if (!result) throw new InternalError('Unable to create Trip');
    
-  //  await adminActivityNotification(result.notificationDAta.adminId,result.notificationData)
    
     new SuccessResponse('Trip Created Successfully', {
       trip: result.savedTrip
@@ -125,6 +123,45 @@ export const getSingleTrip = [
     }).send(res);
   }),
 ];
+
+
+export const getSingleTripAdminBySlug = [
+  // validator(schema.searchById,ValidationSource.QUERY),
+  asyncHandler(async (req:ProtectedRequest, res) => {
+
+  
+      const slug = req.params.slug
+
+
+      if(!slug)
+      {
+        throw new NotFoundError("Please Provide Trip details");
+      }
+
+      const trip = await TripController.findSingleTripClientBySlug(slug)
+    
+    if (!trip) throw new InternalError("Unable to fetch trip");
+
+    new SuccessResponse('Trip Fetched',{trip:trip} ).send(res);
+  }),
+];
+
+export const getActiveTripsNameSlug = [
+  // validator(schema.searchById,ValidationSource.QUERY),
+  asyncHandler(async (req:ProtectedRequest, res) => {
+
+  
+    const adminId = req.user._id
+     
+
+      const trip = await TripController.findActiveTripsNameSlugPriceSlotsDates(adminId)
+    
+    if (!trip) throw new InternalError("Unable to fetch trip");
+
+    new SuccessResponse('Trip Fetched',{trip:trip} ).send(res);
+  }),
+];
+
 
 export const updateAdminWorkingTrip = [
   

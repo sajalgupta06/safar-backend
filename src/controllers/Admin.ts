@@ -29,7 +29,7 @@ export default class AdminController {
 
   
   public static findById(id: Types.ObjectId|string): Promise<Admin | null> {
-    return AdminModel.findOne({ _id: id, status: true })
+    return AdminModel.findOne({ _id: id, status: true }).select("_id role companyRegistration.legalCompanyName companyRegistration.logo")
       .lean<Admin>()
       .exec();
   }
