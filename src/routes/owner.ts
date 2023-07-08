@@ -1,7 +1,4 @@
 import express from 'express';
-import apiKey from '../lib/auth/apikey'
-import logout from '../services/owner/access/logout'
-import tokenRefresh from '../services/owner/access/token'
 import {login} from '../services/owner/access/login'
 import {signup} from '../services/owner/access/signup'
 import {createApi, getAllApi} from '../services/owner/xApiKeys/index'
@@ -10,7 +7,7 @@ import { RoleCode } from '../models/Role';
 import role from '../helper/role'
 import {createTrip, getAllTripsOwner, getSingleTripAdmin} from '../services/owner/trip/index'
 import { allOwners, singleOwner} from '../services/owner/users/owner'
-import { allAdmins, singleAdmin} from '../services/owner/users/admin'
+import { allAdmins, singleAdmin, verifyAdmins} from '../services/owner/users/admin'
 import { getAllUsers, getUser, updateUser} from '../services/owner/users/client'
 import {createCompany} from '../services/owner/company/index'
 import {bookTicketManual, fetchTripTicket} from '../services/owner/ticket/index'
@@ -39,6 +36,7 @@ router.get('/allOwners',allOwners );
 
 router.get('/admin',singleAdmin );
 router.get('/allAdmins',allAdmins );
+router.post('/verifyAdmin',  verifyAdmins );
 
 router.get('/user',getUser );
 router.get('/allUsers',getAllUsers);

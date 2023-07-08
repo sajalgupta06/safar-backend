@@ -93,12 +93,18 @@ const schema = new Schema(
       type: String,
       enum: ["Male", "Female", "Other"],
     },
+
+    age: {
+      type: Number,
+    
+    },
     city: {
       type: String,
     },
     country: {
       type: String,
     },
+    
     phoneVerified: {
       type: Boolean,
       default: false,
@@ -107,9 +113,9 @@ const schema = new Schema(
       type: Boolean,
       default: false,
     },
+
     role: {
       type: Schema.Types.String,
-      enum: ["CLIENT", "ADMIN"],
       default:"ADMIN",
     },
 
@@ -117,10 +123,6 @@ const schema = new Schema(
       type: Schema.Types.String,
     },
 
-    photo: {
-      type: String,
-      trim: true,
-    },
 
     trips: [{
       type: Schema.Types.ObjectId,
@@ -136,6 +138,7 @@ const schema = new Schema(
       default: true,
     },
     slug:String,
+
     companyType: {
       type: String,
       enum: ["ORGANISATION", "INDIVIDUAL"],
@@ -150,23 +153,29 @@ const schema = new Schema(
 
    
     companyRegistration: {
+
       legalCompanyName: { type: String },
       logo: { type: String },
       gstin: { type: String },
+      anuualTurnover:{type:String},
       yearOfFoundation: { type: String },
-      companyPan : {String},
+      pan : {String},
       address: {
-        country: { type: String },
         state: { type: String },
         city: { type: String },
-        code: { type: String },
-        address1: { type: String },
-        address2: { type: String },
-        phone: { type: Number },
+        address: { type: String },
       },
+
       companyWebsite: { type: String },
+     
     },
 
+    socialMediaLinks:{
+      instagram:String,
+      facebook:String,
+      youtube:String,
+    }
+    ,
     bankDetails:{
       accountNumber:Number,
       accountHolderName:String,

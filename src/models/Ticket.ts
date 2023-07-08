@@ -5,6 +5,9 @@ export const DOCUMENT_NAME = "Ticket";
 export const COLLECTION_NAME = "tickets";
 
 export default interface Ticket extends Document {
+
+  ticketId:string,
+
   passengers: [
     {
       name: string;
@@ -56,6 +59,13 @@ export default interface Ticket extends Document {
 
 const schema = new Schema(
   {
+
+    ticketId:{
+      type:String,
+      unique:true,
+      required:true
+    },
+
     passengers: [
       {
         name: {
@@ -134,6 +144,7 @@ const schema = new Schema(
     timestamps: true,
   }
 );
+schema.index({ticketId:1})
 schema.index({admin:1}, {unique:false})
 
 export const TicketModel = model<Ticket>(

@@ -3,7 +3,7 @@ import apiKey from '../lib/auth/apikey'
 import logout from '../services/admin/access/logout'
 import tokenRefresh from '../services/admin/access/token'
 import {login} from '../services/admin/access/login'
-import {checkOtpEmail, checkOtpPhone, getOtpEmail, getOtpPhone, signup} from '../services/admin/access/signup'
+import {checkOtpEmail, checkOtpPhone, getOtpEmail, getOtpPhone, register} from '../services/admin/access/register'
 import { RoleCode } from '../models/Role';
 import role from '../helper/role'
 import {createTrip, createWorkingTrip, deleteTrips, fetchWorkingTrip, getActiveTripsNameSlug, getAllTrips, getSingleTrip, getSingleTripAdminBySlug, getTripPricePlan, publishTrip, updateTrip} from '../services/admin/trip/index'
@@ -11,8 +11,8 @@ import authentication from '../lib/auth/authentication';
 import {bookTicketManual, fetchActiveTripsBookingDetails, fetchAllBookingsTrips, fetchRecentTicketsAdmin, fetchTripTicket} from '../services/admin/ticket/index'
 import {fetchNameLogoPlan, getCompanyInfo} from '../services/admin/company'
 import {getAllCollections} from '../services/admin/collection'
-import {getAdminInfo, updateAdminInfo, verifyAdminAccess} from '../services/admin/adminInfo'
-
+import {checkAdminExists, getAdminInfo, updateAdminInfo, verifyAdminAccess} from '../services/admin/adminInfo'
+import {getBookings, getRevenue, getTripsInsights} from '../services/admin/analytics/index'
 const router = express.Router();
 
 
@@ -24,19 +24,23 @@ router.post('/getOtpPhone', getOtpPhone);
 router.post('/verifyOtpPhone', checkOtpPhone);
 router.post('/getOtpEmail', getOtpEmail);
 router.post('/verifyOtpEmail', checkOtpEmail);
-router.post('/signup', signup);
+router.post('/register', register);
 router.post('/login', login);
 
+
+router.post('/checkAdminExists',checkAdminExists);  
 
 router.use('/',role(RoleCode.ADMIN),authentication )
 
 
-router.get('/',verifyAdminAccess);  
+
 
 // admin
-router.get('/adminInfo',getAdminInfo);  
+router.get('/adminInfo',getAdminInfo); 
+
 router.post('/adminInfo',updateAdminInfo);  
 
+router.get('/',verifyAdminAccess);  
 
 
 
@@ -85,6 +89,12 @@ router.get('/companyInfo',getCompanyInfo);
 router.get('/collections',getAllCollections);
 
 
+
+
+// Analytics
+router.get('/fetchRevenue',getRevenue);
+router.get('/fetchBookings',getBookings);
+router.get('/fetchtripsInsights',getTripsInsights);
 
 
 

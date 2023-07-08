@@ -9,7 +9,7 @@ import Analytics, { AnalyticsModel } from "../models/Analytics";
 import Logger from "../helper/Logger";
 import { object_equals } from "../helper/ObjectEquals";
 import { adminNotification, notificationFormat } from "../lib/setup/firebase";
-
+import {generateId} from '../helper/GenerateUniqueID'
 export default class TicketController {
   public static async findAllTicketsOwner(query: any): Promise<Ticket | null> {
     let ticket = new ResourceFilter(TicketModel, query);
@@ -177,7 +177,11 @@ export default class TicketController {
     const tripName = data.tripDetails.name;
     const adminId = data.admin;
 
-    const ticket = new TicketModel(data);
+    const ticketId = generateId()
+
+    const ticketData  = {...data, ticketId:ticketId}
+
+    const ticket = new TicketModel(ticketData);
 
     const savedTicket = await ticket.save({ session });
 

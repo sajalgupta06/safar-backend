@@ -87,12 +87,14 @@ export const checkOtpEmail = [
   }),
 ];
 
-export const signup = [
 
-  validator(schema.signup),
+export const register = [
+
+  // validator(schema.signup),
   asyncHandler(async (req, res) => {
 
       const data = req.body
+
      const admin = await AdminController.create(data)
 
     new SuccessResponse('Signup Success',{

@@ -259,23 +259,24 @@ export default class TripController {
     const sortDirection = parseInt(query?.sortDirection);
     const sort = query?.sort;
 
-    let findQuery = {
-      $text: { $search: search },
-      days: { $gte: minDays, $lte: maxDays },
-      finalPrice: { $gte: minPrice, $lte: maxPrice },
-    };
+   
     let sortQuery = {};
 
-    if (sort == "price") {
+
+
+
+    if (sort === "price") {
       sortQuery = { finalPrice: sortDirection || 1 };
     }
 
-    if (sort == "newestFirst") {
+    else if (sort === "newestFirst") {
       sortQuery = { updatedAt: sortDirection || 1 };
-    } else {
+    }
+     else {
       sortQuery = { popular: sortDirection || -1 };
     }
-
+  
+    console.log(sort,sortQuery)
     return await TripModel.find({
       $and: [
         { $text: { $search: search } },

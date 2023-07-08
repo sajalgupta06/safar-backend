@@ -1,8 +1,6 @@
 import express from 'express';
 import { SuccessResponse } from '../../../helper/ApiResponse';
-import crypto from 'crypto';
-import UserController from '../../../controllers/User';
-import KeystoreController from '../../../controllers/Keystore';
+
 import { BadRequestError, AuthFailureError, InternalError } from '../../../helper/ApiError';
 import { createTokens, validatePassword } from '../../../lib/auth/authUtils';
 import validator from '../../../helper/validator';
@@ -50,6 +48,39 @@ export const allAdmins = [
     }),
   ];
 
+  export const verifyAdmins = [
 
+    // validator(schema.query),
+  
+    asyncHandler(async (req:ProtectedRequest, res) => {
+     
+        const adminIds = req.body.adminIds
+
+        const verifiedAdminArray:any = []
+
+
+        for (let index = 0; index < adminIds.length; index++) {
+          const id = adminIds[index];
+
+          const verifiedAdmins= await AdminController.verifyAdmin(id)
+
+          if(!verifiedAdmins){
+
+          verifiedAdminArray.push({[id]:false})
+          }
+          else{
+            verifiedAdminArray.push({[id]:true})
+          }
+
+          
+        }
+
+        
+        new SuccessResponse('Admins Verified ', {
+          verifiedAdmins:verifiedAdminArray
+        }).send(res);
+      }),
+    ];
+  
 
 
