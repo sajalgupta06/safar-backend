@@ -3,7 +3,7 @@ export enum ApiEndpoint {
   FETCH_SEARCH_TRIPS_NAME_SLUG_FINALPRICE = 'search',
   FETCH_USER = 'user',
   UPDATE_USER = 'user',
-  GENERATE_PHONE_OTP = 'GENERATE_PHONE_OTP',
+  GENERATE_PHONE_OTP = 'getOtpPhone',
   VERIFY_PHONE_OTP = 'verifyOtpPhone',
   BOOK_TICKET = 'bookTrip',
   FETCH_USERS_TICKET = 'ticket',

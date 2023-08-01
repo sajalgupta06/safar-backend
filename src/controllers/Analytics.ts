@@ -16,12 +16,16 @@ export default class AnalyticsController {
     
   }
 
-  public static async fetchTripsInsights(adminId: string): Promise<Analytics | null> {
+  public static async fetchTripsInsights(adminId: string): Promise<any | null> {
 
-    const res =  AllTicketsModel.find({admin:adminId}).populate('trip',   
+    const res =  await AllTicketsModel.find({admin:adminId}).populate('trip',   
    { completed: true }
   ).lean<Analytics>().exec()
 
+
+  let tripCount = 0;
+
+  
    
     return res
     

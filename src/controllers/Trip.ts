@@ -15,7 +15,7 @@ export default class TripController {
     // const page = query.page * 1 || 1;
     // const limit = query.limit * 1 || 20;
     // const skip = (page - 1) * limit;
-
+    query = {query,admin:id}
     let trips = new ResourceFilter(TripModel, query).filter().paginate();
     return await trips.resource;
   }
@@ -115,10 +115,9 @@ export default class TripController {
       await session.endSession();
       throw new InternalError("Error in creating ticket model");
     }
-
-    const updatedAdmin = await TripModel.findByIdAndUpdate(
+    const updatedAdmin = await AdminModel.findByIdAndUpdate(
       admin?._id,
-      { $push: { trips: savedTrip},$set:{Alltickets:saveAllTickets._id} },
+      { $push: { trips: savedTrip._id,allTickets:saveAllTickets._id}},
       { new: true }
     ).lean<Admin>()
       .exec();
@@ -159,6 +158,7 @@ export default class TripController {
 
     return { savedTrip, notificationData };
   }
+
 
   public static async updateTripAdmin(
     id: Types.ObjectId,

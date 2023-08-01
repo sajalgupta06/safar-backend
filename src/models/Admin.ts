@@ -127,10 +127,12 @@ const schema = new Schema(
     trips: [{
       type: Schema.Types.ObjectId,
       ref: "Trip",
+      default:[]
     }],
     allTickets: [{
       type: Schema.Types.ObjectId,
       ref: "AllTickets",
+      default:[]
     }],
 
     status: {
