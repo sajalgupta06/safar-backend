@@ -10,6 +10,7 @@ import Logger from "../helper/Logger";
 import { object_equals } from "../helper/ObjectEquals";
 import { adminNotification, notificationFormat } from "../lib/setup/firebase";
 import {generateId} from '../helper/GenerateUniqueID'
+import TripController from "./Trip";
 export default class TicketController {
   public static async findAllTicketsOwner(query: any): Promise<Ticket | null> {
     let ticket = new ResourceFilter(TicketModel, query);
@@ -82,13 +83,71 @@ export default class TicketController {
       .lean<AllTickets>();
   }
 
-  public static async createTicket(
-    data: any
-  ): Promise<{ savedTicket: object }> {
+  public static async   createTicket(
+    data: {
+      passengers: [
+        {
+          name: string;
+          mobileNumber: number;
+          email: string;
+          age: number;
+          gender: string;
+          aadharNumber: string;
+          key:number;
+        }
+      ];
+
+      tripDetails: {
+        id: Types.ObjectId;
+        name: string;
+        slug: string;
+        priceSlot: {
+          pickupPoint: string;
+          dropPoint: string;
+          amount: number;
+          pickupMode: string;
+          dropMode: string;
+          date: {
+            startDate: string;
+            endDate: string;
+          
+          };
+        };
+      };
+
+      payment: {
+        amount: string;
+        mode: string;
+        paymentId:string;
+
+      };
+
+      userDetails: { id: Types.ObjectId; name: string };
+      
+    }
+  ): Promise<any | null> {
+
     const session = await mongoose.startSession();
     session.startTransaction();
 
-    const ticket = new TicketModel(data);
+    const tripId = data.tripDetails.id;
+    const tripName = data.tripDetails.name;
+    const trip = await TripController.findSingleTripAdmin(tripId.toString())
+
+    if (!trip) {
+      await session.abortTransaction();
+      await session.endSession();
+      throw new InternalError("Somwthing went wrong");
+    }
+
+
+    const adminId = trip.admin;
+
+    const ticketId = generateId()
+
+    const ticketData  = {...data, ticketId:ticketId,admin:adminId}
+
+    const ticket = new TicketModel(ticketData);
 
     const savedTicket = await ticket.save({ session });
 
@@ -99,13 +158,15 @@ export default class TicketController {
     }
 
     const updatedAllTickets = await AllTicketsModel.findOneAndUpdate(
-      { trip: data.trip.id },
+      { trip: tripId, admin: adminId },
       {
         $push: { tickets: savedTicket._id },
         $inc: { ticketCount: data.passengers.length },
       },
       { new: true, upsert: true }
     )
+      .populate("tickets")
+      .populate("trip", "dates priceSlots")
       .lean<AllTickets>()
       .session(session);
 
@@ -114,6 +175,33 @@ export default class TicketController {
       await session.endSession();
       throw new InternalError("Error in updating trip");
     }
+
+    let revenue = {
+      mode: data.payment.mode,
+      amount: data.payment.amount,
+      createdAt: Date.now(),
+    };
+
+    let bookings = {
+      count: data.passengers.length,
+      createdAt: Date.now(),
+    };
+
+    const updateAnalytics = await AnalyticsModel.findOneAndUpdate(
+      { admin: adminId },
+      { $push: { revenue: revenue, bookings: bookings } },
+      { new: true, upsert: true }
+    )
+      .lean<Analytics>()
+      .session(session);
+
+    if (!updateAnalytics) {
+      await session.abortTransaction();
+      await session.endSession();
+      throw new InternalError("Error in saving analytics model");
+    }
+
+
 
     const updatedUser = await UserModel.findByIdAndUpdate(
       data.userDetails.id,
@@ -133,7 +221,8 @@ export default class TicketController {
     return { savedTicket };
   }
 
-  public static async createTicketManual(data: {
+
+ public static async createTicketManual(data: {
     passengers: [
       {
         name: string;
@@ -142,6 +231,7 @@ export default class TicketController {
         age: number;
         gender: string;
         aadharNumber: string;
+        key:number;
       }
     ];
     tripDetails: {

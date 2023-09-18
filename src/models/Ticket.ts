@@ -16,13 +16,15 @@ export default interface Ticket extends Document {
       age: number;
       gender: string;
       aadharNumber: string;
+      key:number;
     }
   ];
 
   payment: {
-    status: boolean;
     amount: number;
     mode: string;
+    paymentId:string;
+
   };
   admin:Admin ;
 
@@ -32,9 +34,9 @@ export default interface Ticket extends Document {
     priceSlot: {
       pickupPoint: string;
       dropPoint: string;
-      basePrice: number;
-      pickupTransMode: string;
-      dropTransMode: string;
+      amount: number;
+      pickupMode: string;
+      dropMode: string;
       key:number,
       date: {
         startDate: string;
@@ -68,6 +70,9 @@ const schema = new Schema(
 
     passengers: [
       {
+        key: {
+          type: Number,
+        },
         name: {
           type: String,
           trim: true,
@@ -87,6 +92,7 @@ const schema = new Schema(
         aadharNumber: {
           type: Number,
         },
+       
         email: {
           type: String,
         },
@@ -130,9 +136,10 @@ const schema = new Schema(
     },
 
     payment: {
-      status: Boolean,
       amount: Number,
       mode: String,
+      paymentId:String,
+     
     },
     userDetails: {
       name: String,

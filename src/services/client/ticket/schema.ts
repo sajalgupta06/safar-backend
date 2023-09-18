@@ -4,36 +4,52 @@ import { JoiAuthBearer, JoiObjectId } from "../../../helper/validator";
 
 export default {
   bookTicket: Joi.object().keys({
+
+
     passengers: Joi.array().items({
-      name: Joi.string().required().max(30),
-      phone: Joi.string().required().length(10),
-      age: Joi.string().required().max(2),
-      gender: Joi.string().required().max(6),
-      adhr: Joi.string().required().max(12),
-      email: Joi.string().required().email(),
+      name:Joi.string().required().max(30),
+      age:Joi.number().required(),
+      gender:Joi.string().required().max(6),
+      mobileNumber:Joi.number(),
+      aadharNumber:Joi.number(),
+      key:Joi.number(),
+      email:Joi.string().email(),
+
     }),
 
-    trip: Joi.object().keys({
-      id: Joi.string(),
+
+    payment:Joi.object().keys({
+      mode:Joi.string(),
+      amount:Joi.number(),
+      paymentId: Joi.string(),
       name: Joi.string(),
-      slug: Joi.string(),
-      date: Joi.object().keys({
-        startDate: Joi.string(),
-        endDate: Joi.string(),
-      }),
-      priceSlot: Joi.object().keys({
-        pickupPoint: Joi.string().required().max(30),
-        pickupTransMode: Joi.string().required().max(20),
-        dropPoint: Joi.string().required().max(30),
-        dropTransMode: Joi.string().required().max(20),
-        basePrice: Joi.number().required(),
-      }),
-    }),
 
-    payment: Joi.object().keys({
-      amount: Joi.string(),
-      mode: Joi.string(),
-      status: Joi.boolean(),
     }),
+    
+
+    tripDetails:Joi.object().keys({ 
+      id:JoiObjectId().required(),
+      name:Joi.string(),
+      slug:Joi.string(),
+    
+      priceSlot: Joi.object().keys({
+        _id:JoiObjectId(),
+        pickupPoint:Joi.string().required().max(30),
+        pickupMode:Joi.string().required().max(30),
+        dropPoint:Joi.string().required().max(30),
+        dropMode:Joi.string().required().max(30),
+        amount:Joi.number().required(),
+        date:Joi.object().keys({
+          startDate:Joi.string(),
+          endDate:Joi.string(),
+        })
+      })
+    }),
+  
+    userDetails:Joi.object().keys({
+      name:Joi.string(),
+      id:Joi.string(),
+    })
+
   }),
 };

@@ -50,5 +50,9 @@ accessIDKey : process.env.ACCESS_ID_KEY,
 secreteAccessKey: process.env.SECRET_ACCESS_KEY
 }
 
+export const razorpayKeys = {
+  key_id  : process.env.Live_Key_ID || "",
+  key_secret : process.env.Live_Key || ""
+}
 
 

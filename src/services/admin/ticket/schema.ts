@@ -14,6 +14,7 @@ export default {
       gender:Joi.string().required().max(6),
       mobileNumber:Joi.number(),
       aadharNumber:Joi.number(),
+      key:Joi.number(),
       email:Joi.string().email(),
 
     }),
@@ -22,7 +23,8 @@ export default {
     payment:Joi.object().keys({
       mode:Joi.string(),
       amount:Joi.number(),
-      status:Joi.boolean()
+      paymentId: Joi.string(),
+      name: Joi.string(),
 
     }),
     
@@ -33,16 +35,15 @@ export default {
       slug:Joi.string(),
     
       priceSlot: Joi.object().keys({
+        _id:JoiObjectId(),
         pickupPoint:Joi.string().required().max(30),
         pickupMode:Joi.string().required().max(30),
         dropPoint:Joi.string().required().max(30),
         dropMode:Joi.string().required().max(30),
         amount:Joi.number().required(),
-        key:Joi.number(),
         date:Joi.object().keys({
           startDate:Joi.string(),
           endDate:Joi.string(),
-          key:Joi.number(),
         })
       })
     })

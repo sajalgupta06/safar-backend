@@ -28,18 +28,15 @@ export const bookTicket = [
   
     const ticket =  await TicketController.createTicket({
       passengers:req.body.passengers,
-      trip:req.body.trip,
       payment:req.body.payment,
-      userDetails:{
-        id:req.user._id,
-        name:`${req.user.firstName} ${req.user.lastName?req.user.lastName:""}`
-      }
+      tripDetails:req.body.tripDetails,
+      userDetails:req.body.userDetails,
     })
     if(!ticket){
       throw new InternalError("Unable to Book Trip")
     }
 
-    Logger.info(ticket)
+    // Logger.info(ticket)
     
     // const notificationData = {
     //   body: `A new user has booked ${ticket.trip.name} `,
@@ -48,6 +45,7 @@ export const bookTicket = [
     // };
 
     // await adminNotification(ticket.trip.admin.toString(),notificationData)
+
 
     new SuccessResponse('Ticket Booked',{
       ticket:ticket.savedTicket

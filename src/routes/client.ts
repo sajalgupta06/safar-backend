@@ -11,6 +11,8 @@ import {bookTicket, fetchUsersTicket} from '../services/client/ticket/index'
 import {addFavouriteTrip, removeFavouriteTrip, searchTrip, searchTripByCollection,getAllPublishedTrips, getSingleTrip, getMultipleTrips, getSingleTripBySlug} from '../services/client/trip/index'
 import {getAllCollectionsNames} from '../services/client/collection/index'
 import{ApiEndpoint} from '../helper/ApiEndpoint'
+import {getOrderId, verifyOrder} from '../services/client/payment/index'
+
 const router = express.Router();
 
 
@@ -60,6 +62,13 @@ router.post('/trips', getMultipleTrips);
 // Upload Image
 router.put('/image', uploadProfilePicture);
 
+
+//Payment
+
+router.use('/', role(RoleCode.CLIENT),authentication)  
+
+router.post('/getpaymentorderid', getOrderId);
+router.post('/verifypayment', verifyOrder);
 
 
 export default router
