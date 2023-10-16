@@ -10,6 +10,7 @@ import { allOwners, singleOwner} from '../services/owner/users/owner'
 import { allAdmins, singleAdmin, verifyAdmins} from '../services/owner/users/admin'
 import { getAllUsers, getUser, updateUser} from '../services/owner/users/client'
 import {createCompany} from '../services/owner/company/index'
+import {createCollection, getAllCollections} from '../services/owner/collections/index'
 import {bookTicketManual, fetchTripTicket} from '../services/owner/ticket/index'
 import {fetchTopTrending, handleAddCollections, handleAddLocations, handleDeleteCollection, handleDeleteLocation} from '../services/owner/Manual/TopTrending'
 const router = express.Router();
@@ -56,6 +57,12 @@ router.get('/xApi', getAllApi);
 router.post('/trip', createTrip);
 router.get('/trips',  getAllTripsOwner);
 router.get('/trip',  getSingleTripAdmin);
+
+
+// Collections
+
+router.post('/collection',  createCollection);
+router.get('/collections',  getAllCollections);
 
 
 // Working Trip

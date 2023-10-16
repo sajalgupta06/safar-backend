@@ -87,11 +87,11 @@ export const searchTrip = [
 
 
 export const searchTripByCollection = [
-    validator(schema.query,ValidationSource.QUERY),
+    // validator(schema.query,ValidationSource.QUERY),
     asyncHandler(async (req:ProtectedRequest, res) => {
   
-  
-        const trips = await TripController.searchTripByCollection(req.query)
+   const slug = req.params.slug
+        const trips = await TripController.searchTripByCollection(slug,req.query)
       
       if (!trips) throw new InternalError();
   

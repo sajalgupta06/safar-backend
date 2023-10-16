@@ -7,7 +7,9 @@ import User, { UserModel } from "../models/User";
 import ResourceFilter from "../helper/ResourceFilter";
 import Admin, { AdminModel } from "../models/Admin";
 import AllTickets, { AllTicketsModel } from "../models/AllTickets";
+import { CollectionModel } from "../models/Collection";
 export default class TripController {
+
   public static async findAllTripAdmin(
     id: ObjectId,
     query: any
@@ -276,7 +278,7 @@ export default class TripController {
       sortQuery = { popular: sortDirection || -1 };
     }
   
-    console.log(sort,sortQuery)
+   
     return await TripModel.find({
       $and: [
         { $text: { $search: search } },
@@ -313,13 +315,13 @@ export default class TripController {
       .exec();
   }
 
-  public static async searchTripByCollection(query: any): Promise<Trip | null> {
-    const search = query.search || " ";
+  public static async searchTripByCollection(slug:string,query: any): Promise<Trip | null> {
+    const search = slug || " ";
     const page = query.page * 1 || 1;
     const limit = query.limit * 1 || 10;
     const skip = (page - 1) * limit;
 
-    return await TripModel.find({ "collection.id": search })
+    return await TripModel.find({ "collections.slug": search })
       .skip(skip)
       .limit(limit)
       .lean<Trip>();
@@ -388,4 +390,7 @@ export default class TripController {
       .lean<Trip>()
       .exec();
   }
+
+ 
+
 }

@@ -26,10 +26,9 @@ export const updateUser = [
   asyncHandler(async (req: ProtectedRequest, res) => {
     const data = req.body;
     const userId = req.user._id;
-    
+
     
     console.log(data)
-    console.log("files",req.files)
 
     const updatedUser = await UserController.updateInfo(userId, data);
     if (!updatedUser) {

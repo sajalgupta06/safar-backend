@@ -84,9 +84,6 @@ export const updateTrip = [
 ];
 
 
-
-
-
 export const getAllTrips = [
   
   asyncHandler(async (req:ProtectedRequest, res) => {
@@ -249,6 +246,10 @@ export const getTripPricePlan = [
     ).send(res);
   }),
 ];
+
+
+
+
 
 
 // export const getPublishedTripsName = [

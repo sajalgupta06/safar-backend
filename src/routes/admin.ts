@@ -91,6 +91,7 @@ router.get('/collections',getAllCollections);
 
 
 
+
 // Analytics
 router.get('/fetchRevenue',getRevenue);
 router.get('/fetchBookings',getBookings);

@@ -9,7 +9,7 @@ import { RoleCode } from '../models/Role';
 import role from '../helper/role'
 import {bookTicket, fetchUsersTicket} from '../services/client/ticket/index'
 import {addFavouriteTrip, removeFavouriteTrip, searchTrip, searchTripByCollection,getAllPublishedTrips, getSingleTrip, getMultipleTrips, getSingleTripBySlug} from '../services/client/trip/index'
-import {getAllCollectionsNames} from '../services/client/collection/index'
+import {getAllCollection, getAllCollectionsNames, getSingleCollection} from '../services/client/collection/index'
 import{ApiEndpoint} from '../helper/ApiEndpoint'
 import {getOrderId, verifyOrder} from '../services/client/payment/index'
 
@@ -41,7 +41,7 @@ router.post(`/${ApiEndpoint.REMOVE_TRIP_FROM_FAVOURITES}`,role(RoleCode.CLIENT),
 // Search Triprun 
 
 router.get(`/${ApiEndpoint.FETCH_SEARCH_TRIPS_NAME_SLUG_FINALPRICE}`, searchTrip);
-router.get('/tripByCollection', searchTripByCollection);
+router.get('/tripByCollection/:slug', searchTripByCollection);
 router.get( `/${ApiEndpoint.FETCH_FULL_TRIP_DETAILS}/:slug` , getSingleTripBySlug);
 router.get('/trip', getSingleTrip);
 
@@ -55,7 +55,11 @@ router.get('/collNames', getAllCollectionsNames);
 //Fetch Multiple Trips
 
 router.post('/trips', getMultipleTrips);
+
+
 //Collection
+router.get('/collections', getAllCollection);
+router.get('/collection/:slug', getSingleCollection);
 
 
 

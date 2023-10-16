@@ -78,6 +78,7 @@ const schema = new Schema(
       name: Schema.Types.String,
       id: Schema.Types.String,
     }],
+    
     name: {
       type: Schema.Types.String,
       required: true,
