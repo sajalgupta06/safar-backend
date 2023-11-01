@@ -77,7 +77,18 @@ export default  class TopTrendingController {
     return result
   }
 
+  public static async FETCH_TOP_TRENDING_LOCATIONS(): Promise<
+  TopTrending | null> {
 
+    const result = await TopTrendingModel.findOne().select('locations')
+   
+    if(!result)
+    {
+      throw new InternalError("Unable to fetch document")
+    }
+
+    return result
+  }
 }
 
 

@@ -63,7 +63,7 @@ export const getUser = [
 ];
 
 export const uploadProfilePicture = async (req: any, res: any) => {
-  const key = "profile/" + uuidv4();
+  const key =   uuidv4();
 
   const result = await UploadImage.single(key);
 

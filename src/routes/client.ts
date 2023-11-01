@@ -10,6 +10,7 @@ import role from '../helper/role'
 import {bookTicket, fetchUsersTicket} from '../services/client/ticket/index'
 import {addFavouriteTrip, removeFavouriteTrip, searchTrip, searchTripByCollection,getAllPublishedTrips, getSingleTrip, getMultipleTrips, getSingleTripBySlug} from '../services/client/trip/index'
 import {getAllCollection, getAllCollectionsNames, getSingleCollection} from '../services/client/collection/index'
+import {getTrendingLocations} from '../services/client/trending/index'
 import{ApiEndpoint} from '../helper/ApiEndpoint'
 import {getOrderId, verifyOrder} from '../services/client/payment/index'
 
@@ -67,12 +68,21 @@ router.get('/collection/:slug', getSingleCollection);
 router.put('/image', uploadProfilePicture);
 
 
+
+// Trending
+
+router.get('/topTrendingLocations', getTrendingLocations);
+
+
+
+
 //Payment
 
 router.use('/', role(RoleCode.CLIENT),authentication)  
 
 router.post('/getpaymentorderid', getOrderId);
 router.post('/verifypayment', verifyOrder);
+
 
 
 export default router

@@ -75,9 +75,12 @@ const schema = new Schema(
    ],
   
     collections: [{
-      name: Schema.Types.String,
-      id: Schema.Types.String,
-    }],
+      slug: Schema.Types.String,
+      _id: {
+        type: Schema.Types.ObjectId,
+        ref: "Collection",
+      },
+    }], 
     
     name: {
       type: Schema.Types.String,

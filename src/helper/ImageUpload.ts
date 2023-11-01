@@ -15,7 +15,7 @@ export default class UploadImage {
 
 public static async single(key:any): Promise<any> {
   
-  var params = {Bucket: 'safar-bucket', Key:  key ,};
+  var params = {Bucket: 'safar-image-db', Key:  key ,};
 
     
    return  s3.getSignedUrl('putObject', params)

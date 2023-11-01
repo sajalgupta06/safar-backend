@@ -12,7 +12,7 @@ import { getAllUsers, getUser, updateUser} from '../services/owner/users/client'
 import {createCompany} from '../services/owner/company/index'
 import {createCollection, getAllCollections} from '../services/owner/collections/index'
 import {bookTicketManual, fetchTripTicket} from '../services/owner/ticket/index'
-import {fetchTopTrending, handleAddCollections, handleAddLocations, handleDeleteCollection, handleDeleteLocation} from '../services/owner/Manual/TopTrending'
+import {fetchTopTrending, fetchTopTrendingLocations, handleAddCollections, handleAddLocations, handleDeleteCollection, handleDeleteLocation} from '../services/owner/Manual/TopTrending'
 const router = express.Router();
 
 
@@ -90,6 +90,7 @@ router.post('/addCollections', handleAddCollections);
 router.post('/deleteCollection', handleDeleteCollection);
 router.post('/deleteLocation', handleDeleteLocation);
 router.get('/topTrending', fetchTopTrending);
+router.get('/topTrendingLocations', fetchTopTrendingLocations);
 
 
 

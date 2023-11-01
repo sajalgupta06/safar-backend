@@ -21,6 +21,23 @@ export const fetchTopTrending = [
   }),
 ];
 
+export const fetchTopTrendingLocations = [
+
+  asyncHandler(async (req:ProtectedRequest, res) => {
+
+  
+  
+      const result = await TopTrendingController.FETCH_TOP_TRENDING_LOCATIONS()
+
+      if(!result)
+      {
+        throw new InternalError("Unable to fetch documents")
+
+      }
+
+    new SuccessResponse("Documents Fetched Successfully",result.locations).send(res);
+  }),
+];
 
 
 

@@ -71,7 +71,7 @@ mongoose.Query.prototype.exec = async function overrideExec(...params:any) {
       // return Array.isArray(cacheObject)
       //   ? cacheObject.map(doc => new this.model(doc))
       //   : new this.model(cacheObject);
-
+      // console.log('From Cache')
       return cacheObject;
     }
 

@@ -286,8 +286,8 @@ export default class TripController {
         { finalPrice: { $gte: minPrice, $lte: maxPrice } },
         // { ...(collectionName && { "collections.name": collectionName }) }
       ],
-    })
-      .select(" name slug finalPrice ")
+    }).populate("collections._id","name")
+      .select(" name slug finalPrice  collections photos")
       .skip(skip)
       .limit(limit)
       .sort(sortQuery)
@@ -310,7 +310,12 @@ export default class TripController {
   public static async FETCH_POPULAR_TRIPS_NAME_SLUG_FINALPRICE(): Promise<User | null> {
     // let trips = new ResourceFilter(TripModel, query).filter().paginate()
     return await TripModel.find({ published: true })
-      .select("+name +slug +finalPrice")
+    .populate({
+      path: 'collections._id',
+      model: 'Collection',
+      select: { '_id': 1,'name':1},
+   })
+      .select("+name +slug +finalPrice +collections +photos")
       .cache({ key: "FETCH_POPULAR_TRIPS_NAME_SLUG_FINALPRICE" })
       .exec();
   }
@@ -321,7 +326,7 @@ export default class TripController {
     const limit = query.limit * 1 || 10;
     const skip = (page - 1) * limit;
 
-    return await TripModel.find({ "collections.slug": search })
+    return await TripModel.find({ "collections.slug": search }).populate("collections._id","name")
       .skip(skip)
       .limit(limit)
       .lean<Trip>();
